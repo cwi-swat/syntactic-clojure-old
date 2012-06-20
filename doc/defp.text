@@ -1,0 +1,85 @@
+
+
+Macros that Parse
+=================
+
+
+Any macro labeled with {:parsing true} will be a "parsing macro". Such
+macros always have a single argument which represents the literal,
+*exact* source representation of the arguments. The reader detects
+invocations of pasing macros at *read time*. Instead of parsing the
+arguments normally, the arguments are captured as a string and
+returned literally.
+
+For example, a parser macro to parse dates could be used as follows: 
+
+    (date Wed Jun 20 21:52:24 CEST 2012)
+    
+The reader will turn this into:
+
+    (date "Wed Jun 20 21:52:24 CEST 2012")
+    
+The definition of the date macro will parse the string at
+*macro-expansion time* and, in this case, produce a Date object.  For
+instance:
+
+    (defmacro date
+      {:parsing true} 
+      [src]
+      (parse-date src))
+      
+      
+In this case the macro simply calls the parse-date function to parse
+the string value bound to src.
+
+To simplify defining parsing macros, there is the helper macro defp:
+
+    (defmacro defp [name args & body]
+      (if (= (length args) 1)
+       `(defmacro ~name {:parsing true} ~args ~@body)
+       (throw "Parsing macros can only have one parameter.")))
+
+### Grammars
+
+Grammars are defined using a parsing macro. They evaluate to a AST for
+grammars. The grammar macros is defined as follows:
+
+    (defp grammar [src]
+       (parse-grammar src))
+       
+An example use could be
+
+    (grammar Exp ::= symbol | Exp "+" Exp)
+    
+Which is read by the reader as:
+
+    (grammar "Exp ::= symbol | Exp \"+\" Exp)
+    
+And expanded to:
+
+    '(grammar [(rule Exp [(alt [:symbol]) (alt [Exp "+" Exp])])])
+    
+Such a value could be used by a parser function that interprets the
+grammar. 
+
+
+Grammars as values can be used in the definition of other parsing
+macros. For instance, ...
+
+    (defp stm [src]
+       (parse (grammar <grammar of state machines>) src))
+
+Or alternatively, to make the grammar reusable outside the embedding:
+
+    (def *stm-grammar* (grammar ...))
+    (defp stm [src] (parse *stm-grammar* src))
+
+Bootstrapping the meta-grammar can be achieved as follows.
+
+    (def *meta-grammar* (grammar <the grammar of grammars>))
+
+    (defp grammar [src]
+       (parse *meta-grammar* src)
+
+       
+
