@@ -35,8 +35,6 @@ import static org.rascalmpl.values.clojure.FormAdapter.isUnquotes;
 import static org.rascalmpl.values.clojure.FormAdapter.isVar;
 import static org.rascalmpl.values.clojure.FormAdapter.isVector;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -48,7 +46,6 @@ import java.util.regex.Pattern;
 import org.eclipse.imp.pdb.facts.IConstructor;
 import org.eclipse.imp.pdb.facts.IList;
 import org.eclipse.imp.pdb.facts.IValue;
-import org.eclipse.imp.pdb.facts.exceptions.FactTypeUseException;
 import org.rascalmpl.values.uptr.TreeAdapter;
 
 public class UPTRLispReader extends LispReader {
@@ -191,8 +188,7 @@ public class UPTRLispReader extends LispReader {
 	private static Object readMap(IList argumentForms) {
 		List<Object> pairs = readForms(argumentForms);
 		if ((pairs.size() & 1) == 1) {
-			// deviation from standard clojure
-			pairs.add(null);
+			throw Util.runtimeException("Map literal must contain an even number of forms");
 		}
 		return RT.map(pairs);
 	}
