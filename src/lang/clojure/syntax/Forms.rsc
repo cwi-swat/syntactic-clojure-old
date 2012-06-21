@@ -8,19 +8,20 @@ syntax Form
   | regexp: RegExp
   | char: Char
   | number: Number
-  | arg: MetaData* Arg
-  | symbol: MetaData* Symbol
-  | \list: MetaData* "(" Form* ")" 
-  | vector: MetaData* "[" Form* "]"
-  | \map: MetaData* "{" Form* "}"
-  | \set: MetaData* "#{" Form* "}"
-  | fn: MetaData* "#(" Form* ")"
-  | var: MetaData* "#\'" Form 
-  | deref: MetaData* "@" Form
-  | unquote: MetaData* "~" !>> [@] Form arg
-  | unquotes: MetaData* "~@" Form arg
-  | quote: MetaData* "\'" Form arg
-  | qquote: MetaData* "`" Form arg
+  | arg: Arg
+  | meta: "^" Form meta Form arg
+  | symbol: Symbol
+  | \list: "(" Form* ")" 
+  | vector: "[" Form* "]"
+  | \map: "{" Form* "}"
+  | \set: "#{" Form* "}"
+  | fn: "#(" Form* ")"
+  | var: "#\'" Form 
+  | deref: "@" Form
+  | unquote: "~" !>> [@] Form arg
+  | unquotes: "~@" Form arg
+  | quote: "\'" Form arg
+  | qquote: "`" Form arg
   | discard: "#_" Form
   | "#^" Symbol
   //| "#=" Eval
@@ -28,12 +29,6 @@ syntax Form
   //| "#\<" Unreadable
   ;
   
-syntax MetaData
-  = @category="MetaVariable" ident: "^" Ident // or symbol?
-  | @category="MetaVariable" string: "^" String 
-  | @category="MetaVariable" \map: "^" "{" Form* "}"
-  ;
-
 lexical Arg
   = [%] !>> [&1-9]
   | [%] [1-9][0-9]* !>> [0-9]
