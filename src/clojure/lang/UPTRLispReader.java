@@ -38,6 +38,7 @@ import static org.rascalmpl.values.clojure.FormAdapter.isVector;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -45,16 +46,35 @@ import java.util.regex.Pattern;
 
 import org.eclipse.imp.pdb.facts.IConstructor;
 import org.eclipse.imp.pdb.facts.IList;
+import org.eclipse.imp.pdb.facts.IListWriter;
 import org.eclipse.imp.pdb.facts.IValue;
+import org.eclipse.imp.pdb.facts.IValueFactory;
+import org.eclipse.imp.pdb.facts.type.Type;
+import org.eclipse.imp.pdb.facts.type.TypeFactory;
+import org.rascalmpl.interpreter.result.ICallableValue;
+import org.rascalmpl.interpreter.result.Result;
+import org.rascalmpl.values.synclj.MetaGrammar;
 import org.rascalmpl.values.uptr.TreeAdapter;
 
 public class UPTRLispReader extends LispReader {
 
+	private static final Keyword META_GRAMMAR = Keyword.intern("meta-grammar");
 	private static final Object DISCARD = new Object();
+	private final IValueFactory vf;
+	private final TypeFactory tf = TypeFactory.getInstance();
+	private final ICallableValue metaParser;
+	private final ICallableValue objectParser;
+	
+	
+	public UPTRLispReader(IValueFactory vf, ICallableValue metaParser, ICallableValue objectParser) {
+		this.vf = vf;
+		this.metaParser = metaParser;
+		this.objectParser = objectParser;
+	}
 	
 	// TODO: unreadable reader (?), eval reader, data readers, ctor reader, record
 
-	static public Object read(IConstructor tree) {
+	public Object read(IConstructor tree) {
 		try {
 			if (isNumber(tree)) {
 				return matchNumber(getLiteralValue(tree));
@@ -120,7 +140,7 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
-	private static Object readQuasi(IConstructor arg) {
+	private Object readQuasi(IConstructor arg) {
 		try {
 			Var.pushThreadBindings(RT.map(GENSYM_ENV, PersistentHashMap.EMPTY));
 			return SyntaxQuoteReader.syntaxQuote(read(arg));
@@ -130,7 +150,7 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
-	private static Object readArg(String token) {
+	private Object readArg(String token) {
 		if (ARG_ENV.deref() == null) {
 			return interpretToken(token);
 		}
@@ -149,7 +169,7 @@ public class UPTRLispReader extends LispReader {
 		throw new IllegalStateException("arg literal must be %, %& or %integer");
 	}
 
-	private static Object readFn(IList argumentForms) {
+	private Object readFn(IList argumentForms) {
 		if(ARG_ENV.deref() != null) {
 			throw new IllegalStateException("Nested #()s are not allowed");
 		}
@@ -185,7 +205,7 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
-	private static Object readMap(IList argumentForms) {
+	private Object readMap(IList argumentForms) {
 		List<Object> pairs = readForms(argumentForms);
 		if ((pairs.size() & 1) == 1) {
 			throw Util.runtimeException("Map literal must contain an even number of forms");
@@ -193,30 +213,126 @@ public class UPTRLispReader extends LispReader {
 		return RT.map(pairs);
 	}
 
-	private static Object readList(IList fullArgs, IList list, int line) {
+	private Object readList(IList fullArgs, IList list, int line) {
 		if (list.isEmpty()) {
 			return PersistentList.EMPTY;
 		}
 		IPersistentList seq = PersistentList.create(readForms(list));
 		if (seq.peek() instanceof Symbol) {
-			Var var = Compiler.isMacro(seq.peek());
-			if (var != null && var.meta().valAt(Keyword.intern("parsing")) == RT.T) {
+			Object grammar = getGrammar(seq.peek());
+			if (grammar != null) {
 				StringBuilder sb = new StringBuilder();
 				// here we need full args, not just AST args.
 				// start at 4 and stop early to skip name and pre/post layout
-				// "(" _ sym _ .... _ ")"
-				//  0  1  2  3 4    n-2   n-1
-				for (int i = 4; i < fullArgs.length() - 3; i++) {
+				// "(" _ sym _ .... _  ")"
+				//  0  1  2  3 4   n-2 n-1
+				for (int i = 4; i < fullArgs.length() - 2; i++) {
 					sb.append(TreeAdapter.yield((IConstructor) list.get(i)));
 				}
-				seq = (IPersistentList) RT.list(seq.peek(), sb.toString());
+				
+				// this is the tree that should be patched up in the original tree.
+				IConstructor ast = parseUsingGrammar(grammar, sb.toString());
+				
+				
+				// Read it again to deal with embedded clojure forms.
+				seq = (IPersistentList) RT.list(seq.peek(), lower(ast));
 			}
 		}
 		IObj s = (IObj) seq;
 		return s.withMeta(RT.map(RT.LINE_KEY, line));
 	}
 
-	private static List<Object> readForms(IList list) {
+	private IConstructor parseUsingGrammar(Object grammar, String string) {
+		if (grammar == META_GRAMMAR) {
+			Result<IValue> result = metaParser.call(new Type[] {tf.stringType()}, 
+					new IValue[] {vf.string(string)});
+			return (IConstructor) result.getValue();
+		}
+		else {
+			IConstructor ast = (IConstructor) liftGrammar(grammar);
+			Result<IValue> result = objectParser.call(new Type[] {MetaGrammar.MetaGrammar, tf.stringType()}, 
+					new IValue[] {ast, vf.string(string)});
+			return (IConstructor) result.getValue();
+		}
+	}
+
+	private IValue liftGrammar(Object node) {
+		// TODO: deal with namespaces properly.
+		if (node instanceof IPersistentList) {
+			ISeq seq = ((IPersistentList)node).seq();
+			String name = ((Symbol)seq.first()).getName();
+			IList args = liftSeq(seq.next());
+			return vf.constructor(MetaGrammar.getTypeForName(name), args);
+		}
+		if (node instanceof IPersistentVector) {
+			return liftSeq(((IPersistentVector)node).seq());
+		}
+		if (node instanceof Keyword) {
+			return vf.constructor(MetaGrammar.getTypeForName(((Keyword)node).getName()));
+		}
+		if (node instanceof Symbol) {
+			return vf.constructor(MetaGrammar.getTypeForName("nonTerminal"), vf.string(((Symbol)node).getName()));
+		}
+		if (node instanceof String) {
+			return vf.constructor(MetaGrammar.getTypeForName("literal"), vf.string((String) node));
+		}
+		throw new AssertionError("cannot lift Grammar node: " + node);
+	}
+
+	private Object lower(IConstructor tree) {
+		if (TreeAdapter.isList(tree) || TreeAdapter.isOpt(tree)) {
+			// make vector
+			IList args = TreeAdapter.getASTArgs(tree);
+			Object[] elts = new Object[args.length()];
+			for (int i = 0; i < args.length(); i++) {
+				elts[i] = lower((IConstructor)args.get(i));
+			}
+			return RT.vector(elts);
+		}
+		if (isClojureTree(tree)) {
+			// NB: we're safe here, despite the lexical tokens are not wrapped/injected
+			// in Forms. Tokens are unparsed and read according to Clojure.
+			// "forms" are wrapped as Form, so getASTargs and friends work as expected.
+			return read(tree);
+		}
+		// an appl with a non-clojure label
+		if (!TreeAdapter.isAppl(tree)) {
+			throw new AssertionError("Tree is not an appl: " + tree);
+		}
+		String name = TreeAdapter.getConstructorName(tree);
+		IList args = TreeAdapter.getASTArgs(tree);
+		ISeq tail = RT.list();
+		for (int i = args.length() - 1; i >= 0; i--) {
+			tail = RT.cons(lower((IConstructor) args.get(i)), tail);
+		}
+		return RT.cons(name, tail);
+	}
+	
+	private final static List<String> CLOJURE_LABELS = Arrays.asList("form", 
+			"integer", "string", "symbol", "char", "float", "number", "regexp");
+	
+	private boolean isClojureTree(IConstructor tree) {
+		return CLOJURE_LABELS.contains(TreeAdapter.getConstructorName(tree));
+	}
+
+	private IList liftSeq(ISeq seq) {
+		IListWriter w = vf.listWriter();
+		while (seq != null) {
+			w.append(liftGrammar(seq.first()));
+			seq = seq.next();
+		}
+		return w.done();
+	}
+	
+	private Object getGrammar(Object op) {
+		Var var = Compiler.isMacro(op);
+		if (var != null) {
+			return var.meta().valAt(Keyword.intern("grammar")); 
+		}
+		return null;
+	}
+
+	private List<Object> readForms(IList list) {
 		List<Object> jlist = new ArrayList<Object>();
 		for (IValue elt : list) {
 			Object x = read((IConstructor) elt);
@@ -227,7 +343,7 @@ public class UPTRLispReader extends LispReader {
 		return jlist;
 	}
 
-	private static Object readMeta(IConstructor metaTree, IConstructor argTree) {
+	private Object readMeta(IConstructor metaTree, IConstructor argTree) {
 		Object meta = read(metaTree);
 		if (meta instanceof Symbol || meta instanceof String) {
 			meta = RT.map(RT.TAG_KEY, meta);
@@ -260,7 +376,7 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
-	private static Object readRegexp(String str) {
+	private Object readRegexp(String str) {
 		StringBuilder sb = new StringBuilder();
 		int i = 0;
 		for (int ch = str.charAt(i); ch != '"'; ch = str.charAt(++i)) {
@@ -274,7 +390,7 @@ public class UPTRLispReader extends LispReader {
 		return Pattern.compile(sb.toString());
 	}
 
-	private static Object readString(String str) {
+	private Object readString(String str) {
 		StringBuilder sb = new StringBuilder();
 		int i = 0;
 		for (int ch = str.charAt(i); ch != '"'; ch = str.charAt(++i)) {
@@ -335,7 +451,7 @@ public class UPTRLispReader extends LispReader {
 		return sb.toString();
 	}
 
-	private static Object matchCharacter(String token) {
+	private Object matchCharacter(String token) {
 		if (token.length() == 1)
 			return Character.valueOf(token.charAt(0));
 		else if (token.equals("newline"))
@@ -371,7 +487,7 @@ public class UPTRLispReader extends LispReader {
 		throw Util.runtimeException("Unsupported character: \\" + token);
 	}
 
-	static private int readUnicodeChar(String token, int offset, int length,
+	private int readUnicodeChar(String token, int offset, int length,
 			int base) {
 		if (token.length() != offset + length)
 			throw new IllegalArgumentException("Invalid unicode character: \\"
@@ -387,7 +503,7 @@ public class UPTRLispReader extends LispReader {
 		return (char) uc;
 	}
 
-	static private Object interpretToken(String s) {
+	private Object interpretToken(String s) {
 		if (s.equals("nil")) {
 			return null;
 		} else if (s.equals("true")) {
@@ -408,7 +524,7 @@ public class UPTRLispReader extends LispReader {
 		throw Util.runtimeException("Invalid token: " + s);
 	}
 
-	private static Object matchSymbol(String s) {
+	private Object matchSymbol(String s) {
 		Matcher m = symbolPat.matcher(s);
 		if (m.matches()) {
 			String ns = m.group(1);
@@ -438,7 +554,7 @@ public class UPTRLispReader extends LispReader {
 		return null;
 	}
 
-	private static Object matchNumber(String s) {
+	private Object matchNumber(String s) {
 		Matcher m = intPat.matcher(s);
 		if (m.matches()) {
 			if (m.group(2) != null) {
@@ -484,7 +600,7 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	@SuppressWarnings("serial")
-	public static class ReaderException extends RuntimeException {
+	public class ReaderException extends RuntimeException {
 		final int line;
 
 		public ReaderException(int line, Throwable cause) {
