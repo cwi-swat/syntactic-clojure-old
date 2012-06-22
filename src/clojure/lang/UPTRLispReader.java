@@ -70,6 +70,7 @@ public class UPTRLispReader extends LispReader {
 	
 	// TODO: unreadable reader (?), eval reader, data readers, ctor reader, record
 	
+	// Result tuples.
 	public static class Pair {
 		public final IConstructor tree;
 		public final Object obj;
@@ -268,18 +269,24 @@ public class UPTRLispReader extends LispReader {
 				String src = sb.toString();
 				
 				// this is the tree that should be patched up in the original tree.
-				IConstructor ast = parseUsingGrammar(grammar, src);
-				Pair lowered = lower(ast);
-				IListWriter w = vf.listWriter();
+				IConstructor pt = parseUsingGrammar(grammar, src);
+				Pair lowered = lower(pt);
+				IListWriter newArgs = vf.listWriter();
+				
+				// Reconstruct "(" _ sym _
 				for (int i = 0; i < 4; i++) {
-					w.append(args.get(i));
+					newArgs.append(args.get(i));
 				}
-				w.append(ast);
+				// add the newly parsed AST.
+				newArgs.append(lowered.tree);
+				
+				// Reconstruct _ ")"
 				for (int i = len - 2; i < len; i++) {
-					w.append(args.get(i));
+					newArgs.append(args.get(i));
 				}
-				tree = tree.set("args", w.done());
-				seq = (IPersistentList) RT.list(seq.peek(), lowered.obj);
+				
+				tree = tree.set("args", newArgs.done());
+				seq = (IPersistentList) RT.list(seq.peek(), RT.list(QUOTE, lowered.obj));
 			}
 			else {
 				tree = tree.set("args", lp.trees);
@@ -290,6 +297,7 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	private IConstructor parseUsingGrammar(Object grammar, String string) {
+		// TODO: pass current namespace to parser functions.
 		if (grammar == META_GRAMMAR) {
 			Result<IValue> result = metaParser.call(new Type[] {tf.stringType()}, 
 					new IValue[] {vf.string(string)});
