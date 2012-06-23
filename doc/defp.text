@@ -82,4 +82,17 @@ Bootstrapping the meta-grammar can be achieved as follows.
        (parse *meta-grammar* src)
 
        
+Calling the reader again. Mimic "compilation", e.g. call macroexpand recursively.
 
+    ; https://github.com/clojure/clojure/blob/master/src/clj/clojure/walk.clj
+    (use 'clojure.walk) 
+    (defn read-again [src] (macroexpand-all (read src)))
+
+To be called from Rascal when parsing using a grammar.
+         
+
+TODO
+====
+
+The above applies to clojure-level stuff. The parsers and read-again
+should built proper parse-trees as side-effects for highlighting...

@@ -286,7 +286,7 @@ public class UPTRLispReader extends LispReader {
 				}
 				
 				tree = tree.set("args", newArgs.done());
-				seq = (IPersistentList) RT.list(seq.peek(), RT.list(QUOTE, lowered.obj));
+				seq = (IPersistentList) RT.list(seq.peek(), lowered.obj);
 			}
 			else {
 				tree = tree.set("args", lp.trees);
