@@ -6,11 +6,11 @@ extend lang::clojure::syntax::Tokens;
 
 
 syntax MetaGrammar
-  = grammar: Rule+ // always one, for start symbol
+  = grammar: "grammar" Rule+ // always one, for start symbol
   ;
 
 syntax Rule
-  = rule: Ident "=" {Alt "|"}+
+  = rule: MetaIdent "=" {Alt "|"}+
   ;
 
 syntax Alt
@@ -59,10 +59,8 @@ lexical Literal
 lexical MetaLiteral
   = Symbol
   | Integer
-  | IntBase
   | Ratio
   | Float
-  | BigDecimal
   | Char
   | String1
   | [,]
@@ -73,8 +71,10 @@ lexical String1
   ;
 
 lexical StrChar1
-  = ![\\\"]
-  | [\\][\\][\\\"nftb]
+  = ![\\\"] 
+  | [\\][\\][\"\\nbtfr]
+  | [\\][\\][u][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]  
+  | [\\][\\][0-3][0-7][0-7]
   ;
   
 lexical MetaIdent = Ident \ Tokens;

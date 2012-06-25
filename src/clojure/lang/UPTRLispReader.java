@@ -12,24 +12,6 @@ package clojure.lang;
 
 import static org.rascalmpl.values.clojure.FormAdapter.getLineNumber;
 import static org.rascalmpl.values.clojure.FormAdapter.getLiteralValue;
-import static org.rascalmpl.values.clojure.FormAdapter.isArg;
-import static org.rascalmpl.values.clojure.FormAdapter.isChar;
-import static org.rascalmpl.values.clojure.FormAdapter.isDeref;
-import static org.rascalmpl.values.clojure.FormAdapter.isDiscard;
-import static org.rascalmpl.values.clojure.FormAdapter.isFn;
-import static org.rascalmpl.values.clojure.FormAdapter.isList;
-import static org.rascalmpl.values.clojure.FormAdapter.isMap;
-import static org.rascalmpl.values.clojure.FormAdapter.isMeta;
-import static org.rascalmpl.values.clojure.FormAdapter.isNumber;
-import static org.rascalmpl.values.clojure.FormAdapter.isQQuote;
-import static org.rascalmpl.values.clojure.FormAdapter.isQuote;
-import static org.rascalmpl.values.clojure.FormAdapter.isRegexp;
-import static org.rascalmpl.values.clojure.FormAdapter.isSet;
-import static org.rascalmpl.values.clojure.FormAdapter.isString;
-import static org.rascalmpl.values.clojure.FormAdapter.isSymbol;
-import static org.rascalmpl.values.clojure.FormAdapter.isUnquotes;
-import static org.rascalmpl.values.clojure.FormAdapter.isVar;
-import static org.rascalmpl.values.clojure.FormAdapter.isVector;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -40,15 +22,21 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lang.synclj.meta.MetaGrammarParser;
+
 import org.eclipse.imp.pdb.facts.IConstructor;
 import org.eclipse.imp.pdb.facts.IList;
 import org.eclipse.imp.pdb.facts.IListWriter;
+import org.eclipse.imp.pdb.facts.IMapWriter;
+import org.eclipse.imp.pdb.facts.INode;
+import org.eclipse.imp.pdb.facts.ISetWriter;
+import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValue;
 import org.eclipse.imp.pdb.facts.IValueFactory;
-import org.eclipse.imp.pdb.facts.type.Type;
-import org.eclipse.imp.pdb.facts.type.TypeFactory;
+import org.eclipse.imp.pdb.facts.impl.fast.ListWriter;
 import org.rascalmpl.interpreter.result.ICallableValue;
-import org.rascalmpl.interpreter.result.Result;
+import org.rascalmpl.parser.gtd.IGTD;
+import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.values.clojure.FormAdapter;
 import org.rascalmpl.values.synclj.MetaGrammar;
 import org.rascalmpl.values.uptr.TreeAdapter;
@@ -58,15 +46,9 @@ public class UPTRLispReader extends LispReader {
 	private static final Keyword META_GRAMMAR = Keyword.intern("meta-grammar");
 	private static final Object DISCARD = new Object();
 	private final IValueFactory vf;
-	private final TypeFactory tf = TypeFactory.getInstance();
-	private final ICallableValue metaParser;
-	private final ICallableValue objectParser;
-	
 	
 	public UPTRLispReader(IValueFactory vf, ICallableValue metaParser, ICallableValue objectParser) {
 		this.vf = vf;
-		this.metaParser = metaParser;
-		this.objectParser = objectParser;
 	}
 	
 	// TODO: unreadable reader (?), eval reader, data readers, ctor reader, record
@@ -93,6 +75,7 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	public Pair read(IConstructor tree) {
+		//System.err.println(getLiteralValue(tree));
 		if (TreeAdapter.isAmb(tree)) {
 			throw new AssertionError("Ambiguous tree: " + tree + "\n \"" + getLiteralValue(tree) + "\"");
 		}
@@ -261,35 +244,18 @@ public class UPTRLispReader extends LispReader {
 		if (seq.peek() instanceof Symbol) {
 			Object grammar = getGrammar(seq.peek());
 			if (grammar != null) {
-				StringBuilder sb = new StringBuilder();
 				// here we need full args, not just AST args.
 				// start at 4 and stop early to skip name and pre/post layout
-				// "(" _ sym _ .... _  ")"
-				//  0  1  2  3 4   n-2 n-1
-				int len = args.length();
-				for (int i = 4; i < len - 2; i++) {
-					sb.append(TreeAdapter.yield((IConstructor) args.get(i)));
-				}
-				String src = sb.toString();
+				// "(" _ Form* _ ")"
+				//  0  1  2    3   4 
+				// can both use args and lp.trees here.
+				String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
 				
-				// this is the tree that should be patched up in the original tree.
-				IConstructor pt = parseUsingGrammar(grammar, src);
+				IConstructor pt = parseUsingGrammar(grammar, src, TreeAdapter.getLocation(tree));
+								
+				args = lp.trees;
 				Pair lowered = lower(pt);
-				IListWriter newArgs = vf.listWriter();
-				
-				// Reconstruct "(" _ sym _
-				for (int i = 0; i < 4; i++) {
-					newArgs.append(args.get(i));
-				}
-				// add the newly parsed AST.
-				newArgs.append(lowered.tree);
-				
-				// Reconstruct _ ")"
-				for (int i = len - 2; i < len; i++) {
-					newArgs.append(args.get(i));
-				}
-				
-				tree = tree.set("args", newArgs.done());
+				tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
 				seq = (IPersistentList) RT.list(seq.peek(), lowered.obj);
 			}
 			else {
@@ -300,19 +266,104 @@ public class UPTRLispReader extends LispReader {
 		return new Pair(tree, s.withMeta(RT.map(RT.LINE_KEY, line)));
 	}
 
-	private IConstructor parseUsingGrammar(Object grammar, String string) {
+	private IConstructor parseMetaGrammar(String src, ISourceLocation loc) {
+		IGTD parser = new MetaGrammarParser();
+		IConstructor pt = (IConstructor) parser.parse("MetaGrammar", loc.getURI(), src.toCharArray(), new NodeToUPTR());
+		// todo: fix locs
+		return pt;
+	}
+	
+	private IConstructor parseUsingGrammar(Object grammar, String string, ISourceLocation loc) {
 		// TODO: pass current namespace to parser functions.
 		if (grammar == META_GRAMMAR) {
-			Result<IValue> result = metaParser.call(new Type[] {tf.stringType()}, 
-					new IValue[] {vf.string(string)});
-			return (IConstructor) result.getValue();
+			return parseMetaGrammar(string, loc);
 		}
 		else {
-			IConstructor ast = (IConstructor) liftGrammar(grammar);
-			Result<IValue> result = objectParser.call(new Type[] {MetaGrammar.MetaGrammar, tf.stringType()}, 
-					new IValue[] {ast, vf.string(string)});
-			return (IConstructor) result.getValue();
+			INode ast = (INode) liftClojureAST(grammar);
+			System.err.println(ast);
+			//IConstructor rgram = liftASTtoGrammar(ast);
+			
+//			IConstructor ast = (IConstructor) liftGrammar(grammar);
+//			Result<IValue> result = objectParser.call(new Type[] {MetaGrammar.MetaGrammar, tf.stringType()}, 
+//					new IValue[] {ast, vf.string(string)});
+//			return (IConstructor) result.getValue();
+			throw new AssertionError("Not yet implemented");
 		}
+	}
+
+	private IConstructor liftASTtoGrammar(IConstructor ast) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private IValue liftClojureAST(Object ast) {
+		if (ast instanceof IPersistentList) {
+			ISeq seq = ((IPersistentList)ast).seq();
+			String name = ((Symbol)seq.first()).getName();
+			seq = seq.next();
+			if (seq == null) {
+				return vf.node(name);
+			}
+			IValue[] arr = new IValue[seq.count()];
+			for (int i = 0; seq != null; i++) {
+				IValue kid = liftClojureAST(seq.first());
+				arr[i] = kid;
+				seq = seq.next();
+			}
+			return vf.node(name, arr);
+		}
+		if (ast instanceof IPersistentVector) {
+			ISeq seq = ((IPersistentVector)ast).seq();
+			IListWriter w = vf.listWriter();
+			while (seq != null) {
+				IValue kid = liftClojureAST(seq.first());
+				w.append(kid);
+				seq = seq.next();
+			}
+			return w.done();
+		}
+		if (ast instanceof IPersistentSet) {
+			ISeq seq = ((IPersistentSet)ast).seq();
+			ISetWriter w = vf.setWriter();
+			while (seq != null) {
+				IValue kid = liftClojureAST(seq.first());
+				w.insert(kid);
+				seq = seq.next();
+			}
+			return w.done();
+		}
+		if (ast instanceof IPersistentMap) {
+			ISeq seq = ((IPersistentMap)ast).seq();
+			IMapWriter w = vf.mapWriter();
+			while (seq != null) {
+				IMapEntry entry = (IMapEntry) seq.first();
+				w.put(liftClojureAST(entry.getKey()),liftClojureAST(entry.getValue()));
+				seq = seq.next();
+			}
+			return w.done();
+		}
+		if (ast instanceof Integer) {
+			return vf.integer(ast.toString());
+		}
+		if (ast instanceof Long) {
+			return vf.integer(ast.toString());
+		}
+		if (ast instanceof BigDecimal) {
+			return vf.real(ast.toString());
+		}
+		if (ast instanceof String) {
+			return vf.string((String)ast);
+		}
+		if (ast instanceof Symbol) {
+			return vf.node("$symbol", vf.string(((Symbol)ast).getName()));
+		}
+		if (ast instanceof Keyword) {
+			return vf.node("$keyword", vf.string(((Symbol)ast).getName()));
+		}
+		if (ast instanceof Pattern) {
+			return vf.node("$regexp", vf.string(((Pattern)ast).toString()));
+		}
+		throw new AssertionError("Could not lift " + ast + " to Rascal value");
 	}
 
 	private IValue liftGrammar(Object node) {
@@ -351,42 +402,79 @@ public class UPTRLispReader extends LispReader {
 			else {
 				newArgs.append(kid);
 			}
-			i++;
-			newArgs.append(args.get(i)); // layout
+			if (i < args.length() - 2) {
+				i++;
+				newArgs.append(args.get(i)); // layout
+			}
 		}			
 		return new ListPair(newArgs.done(), elts);
 	}
+	
+	private ListPair lowerList(IList args) {
+		List<Object> elts = new ArrayList<Object>();
+		IListWriter newArgs = vf.listWriter();
+		for (int i = 0; i < args.length(); i++) {
+			IConstructor kid = (IConstructor) args.get(i);
+			if (TreeAdapter.isList(kid) || TreeAdapter.isOpt(kid)) {
+				IList kidArgs = TreeAdapter.getArgs(kid);
+				IListWriter newKidArgs = vf.listWriter();
+				
+				for (int j = 0; j < kidArgs.length(); j++) {
+					IConstructor kidArg = (IConstructor) kidArgs.get(j);
+					if (!TreeAdapter.isLiteral(kidArg) && !TreeAdapter.isCILiteral(kidArg)) {
+						Pair p = lower(kidArg);
+						elts.add(p.obj);
+						newKidArgs.append(p.tree);
+					}
+					else {
+						newKidArgs.append(kidArg);
+					}
+					if (j < kidArgs.length() - 2) {
+						j++;
+						newKidArgs.append(kidArgs.get(j));
+					}
+				}
+				
+				kid = kid.set("args", newKidArgs.done());
+				newArgs.append(kid);		
+			}
+			else {
+				newArgs.append(kid);
+			}
+			if (i < args.length() - 2) {
+				i++;
+				newArgs.append(args.get(i)); // layout
+			}
+		}			
+		return new ListPair(newArgs.done(), elts);
+	}
+
+
 	
 	private Pair lower(IConstructor tree) {
 		if (TreeAdapter.isList(tree) || TreeAdapter.isOpt(tree)) {
 			// make vector			
 			ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
 			tree = tree.set("args", lp.trees);
-			return new Pair(tree, RT.vector(lp.objs));
-		}
-		if (isClojureTree(tree)) {
-			// NB: we're safe here, despite the lexical tokens are not wrapped/injected
-			// in Forms. Tokens are unparsed and read according to Clojure.
-			// "forms" are wrapped as Form, so getASTargs and friends work as expected.
-			return read(tree);
+			return new Pair(tree, RT.vector(lp.objs.toArray()));
 		}
 		if (TreeAdapter.isAppl(tree)) {
+			List<String> names = Arrays.asList("symbol", "number", "integer", "float", "rational", "string", "char", "regexp", "form",
+						/* meta grammar specials (TODO: fix): */ "literal", "nonTerminal");
+			if (names.contains(TreeAdapter.getConstructorName(tree))) {
+				return read(tree); // depends on cons-labels!!!!!
+			}
+			
 			// an appl with a non-clojure label
 			ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
 			String name = TreeAdapter.getConstructorName(tree);
 			tree = tree.set("args", lp.trees);
-			return new Pair(tree, RT.cons(name, PersistentList.create(lp.objs)));
+			// TODO: namespaces;
+			return new Pair(tree, RT.cons(Symbol.intern(name), PersistentList.create(lp.objs)));
 		}
 		throw new AssertionError("Tree is not an appl: " + tree);
 	}
 	
-	private final static List<String> CLOJURE_LABELS = Arrays.asList("form", 
-			"integer", "string", "symbol", "char", "float", "number", "regexp");
-	
-	private boolean isClojureTree(IConstructor tree) {
-		return CLOJURE_LABELS.contains(TreeAdapter.getConstructorName(tree));
-	}
-
 	private IList liftSeq(ISeq seq) {
 		IListWriter w = vf.listWriter();
 		while (seq != null) {
