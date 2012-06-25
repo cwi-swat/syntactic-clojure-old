@@ -3,18 +3,16 @@
 
 
 
-(def simple-meta-grammar '(grammar [
-   (rule MetaGrammar [(alt grammar [(literal "grammar") (plus (call Rule))])])
-   (rule Rule [(alt rule [(symbol) (literal "=") (plusSep (call Alt) (literal "|"))])])
-   (rule Alt [(alt alt [(symbol) (star (call Exp))])])
+(def ebnf '(grammar [
+   (rule Grammar [(alt grammar [(literal "grammar") (repeat (call Rule))])])
+   (rule Rule [(alt rule [(symbol) (literal "=") (repeatSep (call Alt) (literal "|"))])])
+   (rule Alt [(alt alt [(symbol) (repeat (call Exp))])])
    (rule Exp [
                 (alt literal [(string)]) 
                 (alt call [(symbol)])
-                (alt opt [(literal "(") (call Exp) (literal ")") (literal "?")])
-                (alt star [(literal "(") (call Exp) (literal ")") (literal "*")])
-                (alt plus [(literal "(") (call Exp) (literal ")") (literal "+")])
-                (alt starSep [(literal "(") (call Exp) (string) (literal ")") (literal "*")])
-                (alt plusSep [(literal "(") (call Exp) (string) (literal ")") (literal "+")])
+                (alt optional [(literal "[") (call Exp) (literal "]")]) 
+                (alt repeat [(literal "{") (call Exp) (literal "}") ])
+                (alt repeatSep [(literal "{") (call Exp) (string) (literal "}")])
 
 		;; tokens
                 (alt symbol [(literal "symbol")])
@@ -30,11 +28,12 @@
    ]))
 
 (defmacro grammar 
-  {:grammar simple-meta-grammar}
+  {:grammar ebnf}
   [ast]
     (print ast))
 
 (def while (grammar
+   Prog = prog {Stat}
    Stat = assign symbol "=" form
         | skip "skip"
         | if "if" form "then" Prog "else" Prog "fi"

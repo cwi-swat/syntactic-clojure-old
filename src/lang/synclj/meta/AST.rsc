@@ -14,20 +14,7 @@ data Alt
 
 data Exp
   = literal(str text) // todo: escape and unquote
-  | nonTerminal(str name)
-  | mapLit(list[Exp] args)
-  | vectorLit(list[Exp] args)
-  | listLit(list[Exp] args)
-  | setLit(list[Exp] args)
-  | fnLit(list[Exp] args)
-  | quote(Exp arg)
-  | qquote(Exp arg)
-  | unquote(Exp arg)
-  | unquotes(Exp arg)
-  | deref(Exp arg)
-  | metaIdent()
-  | metaString()
-  | metaMap(list[Exp] args)
+  | call(str name)
   | opt(Exp arg)
   | star(Exp arg)
   | plus(Exp arg)

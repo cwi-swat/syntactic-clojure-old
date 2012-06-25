@@ -290,9 +290,14 @@ public class UPTRLispReader extends LispReader {
 			throw new AssertionError("Not yet implemented");
 		}
 	}
+	
+	private Object lowerAST(IConstructor ast) {
+		
+	}
 
-	private IConstructor liftASTtoGrammar(IConstructor ast) {
-		// TODO Auto-generated method stub
+	private IConstructor liftASTtoGrammar(INode ast) {
+		//Convert this generic INode to typed MetaGrammar AST (as APIGenned)
+		//when encountering $nodes, lift to string.
 		return null;
 	}
 

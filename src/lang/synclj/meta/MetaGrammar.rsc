@@ -19,7 +19,7 @@ syntax Alt
   
 syntax Exp
   = literal: Literal
-  | nonTerminal: MetaIdent
+  | call: MetaIdent
   | mapLit: "\"{\"" Exp* "\"}\""
   | vectorLit: "\"[\"" Exp* "\"]\""
   | listLit: "\"(\"" Exp* "\")\""
