@@ -1,6 +1,6 @@
 module lang::clojure::syntax::Tokens
 
-syntax Number
+lexical Number
   = integer: Integer
   | ratio: Ratio
   | float: Float
