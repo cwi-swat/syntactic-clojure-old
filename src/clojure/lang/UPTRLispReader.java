@@ -93,6 +93,9 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	public Pair read(IConstructor tree) {
+		if (TreeAdapter.isAmb(tree)) {
+			throw new AssertionError("Ambiguous tree: " + tree + "\n \"" + getLiteralValue(tree) + "\"");
+		}
 		try {
 			if (FormAdapter.isNumber(tree)) {
 				return new Pair(tree, matchNumber(getLiteralValue(tree)));
@@ -145,7 +148,7 @@ public class UPTRLispReader extends LispReader {
 				return new Pair(tree, readArg(getLiteralValue(tree)));
 			}
 			if (FormAdapter.isVar(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(THE_VAR, lp.objs.get(0)));
 			}

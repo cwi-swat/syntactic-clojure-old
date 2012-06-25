@@ -2,7 +2,6 @@ package clojure.lang;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.URI;
 import java.util.Arrays;
@@ -15,9 +14,6 @@ import org.eclipse.imp.pdb.facts.IList;
 import org.eclipse.imp.pdb.facts.IListWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValueFactory;
-import org.rascalmpl.interpreter.Evaluator;
-import org.rascalmpl.interpreter.env.GlobalEnvironment;
-import org.rascalmpl.interpreter.env.ModuleEnvironment;
 import org.rascalmpl.interpreter.result.ICallableValue;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
@@ -105,25 +101,31 @@ public class UPTRCompiler extends Compiler {
 		try
 			{
 			
+			if (TreeAdapter.isAmb(file)) {
+				System.err.println("Amb");
+			}
 			
 			// File is start[File], so
 			IConstructor file2 = (IConstructor) TreeAdapter.getArgs(file).get(1);
 			IList args = TreeAdapter.getArgs(file2);
 			// Probably only this is the list of forms; don't forget to fix below.
 			IList forms = TreeAdapter.getArgs((IConstructor) args.get(0));
+//			IList forms3 = TreeAdapter.getArgs((IConstructor)forms.get(0));
 
 
 			IListWriter newArgs = vf.listWriter();
 			for (int i = 0; i < forms.length(); i++) {
-				IConstructor form = (IConstructor) args.get(i);
+				IConstructor form = (IConstructor) forms.get(i);
 				// only forms, no literals at this level.
 				UPTRLispReader.Pair p = reader.read(form);
 				newArgs.append(p.tree);
 				LINE_AFTER.set(TreeAdapter.getLocation(form).getEndLine());
 				ret = eval(p.obj, false);
 				LINE_BEFORE.set(TreeAdapter.getLocation(form).getBeginLine());
-				i++;
-				newArgs.append(args.get(i)); // layout
+				if (i < forms.length() - 2) {
+					i++;
+					newArgs.append(forms.get(i)); // layout
+				}
 			}
 			// Fix tree
 			file2 = file2.set("args", newArgs.done());

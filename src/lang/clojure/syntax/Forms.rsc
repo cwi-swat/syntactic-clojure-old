@@ -9,7 +9,7 @@ syntax Form
   | char: Char
   | number: Number
   | arg: Arg
-  | meta: "^" Form meta Form arg
+  | meta: ("#^"|"^") Form meta Form arg
   | symbol: Symbol
   | \list: "(" Form* ")" 
   | vector: "[" Form* "]"
@@ -23,7 +23,6 @@ syntax Form
   | quote: "\'" Form arg
   | qquote: "`" Form arg
   | discard: "#_" Form
-  | "#^" Symbol
   //| "#=" Eval
   //| "#!" Comment
   //| "#\<" Unreadable
