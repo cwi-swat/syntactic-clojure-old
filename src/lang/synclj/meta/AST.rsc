@@ -1,6 +1,6 @@
 module lang::synclj::meta::AST
 
-data MetaGrammar
+data EBNF
   = grammar(list[Rule] rules)
   ;
   
@@ -15,11 +15,9 @@ data Alt
 data Exp
   = literal(str text) // todo: escape and unquote
   | call(str name)
-  | opt(Exp arg)
-  | star(Exp arg)
-  | plus(Exp arg)
-  | starSep(Exp arg, str sep)
-  | plusSep(Exp arg, str sep) 
+  | optional(Exp arg)
+  | repeat(Exp arg)
+  | repeatSep(Exp arg, str sep)
   | string()
   | integer()
   | number()
