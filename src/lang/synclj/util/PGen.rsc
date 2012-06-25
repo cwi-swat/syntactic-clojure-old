@@ -1,7 +1,14 @@
 module lang::synclj::util::PGen
 
-import Grammar;
+import lang::synclj::meta::MetaGrammar;
+import lang::rascal::grammar::ParserGenerator;
 import ParseTree;
+import Grammar;
+import IO;
 
-@javaClass{lang.synclj.util.PGen}
-public java Tree parse(Grammar grammar, str sort, str src, loc org);
+public void generateGrammarParser() {
+  name = "GrammarParser";
+  src = generateObjectParser("lang.synclj.syntax", name , grammar({sort("MetaGrammar")}, (#MetaGrammar).definitions));
+  writeFile(|project://clojure-rascal/src/lang/synclj/syntax/<name>.java|, src);
+}
+
