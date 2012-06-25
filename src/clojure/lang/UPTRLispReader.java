@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lang.synclj.meta.MetaGrammarParser;
+import lang.synclj.meta.EBNFParser;
+
 
 import org.eclipse.imp.pdb.facts.IConstructor;
 import org.eclipse.imp.pdb.facts.IList;
@@ -38,7 +39,6 @@ import org.rascalmpl.interpreter.result.ICallableValue;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.values.clojure.FormAdapter;
-import org.rascalmpl.values.synclj.MetaGrammar;
 import org.rascalmpl.values.uptr.TreeAdapter;
 
 public class UPTRLispReader extends LispReader {
@@ -253,6 +253,7 @@ public class UPTRLispReader extends LispReader {
 				
 				IConstructor pt = parseUsingGrammar(grammar, src, TreeAdapter.getLocation(tree));
 								
+				// This is right vvvvvvv
 				args = lp.trees;
 				Pair lowered = lower(pt);
 				tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
@@ -267,8 +268,8 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	private IConstructor parseMetaGrammar(String src, ISourceLocation loc) {
-		IGTD parser = new MetaGrammarParser();
-		IConstructor pt = (IConstructor) parser.parse("MetaGrammar", loc.getURI(), src.toCharArray(), new NodeToUPTR());
+		IGTD parser = new EBNFParser();
+		IConstructor pt = (IConstructor) parser.parse("EBNF", loc.getURI(), src.toCharArray(), new NodeToUPTR());
 		// todo: fix locs
 		return pt;
 	}
@@ -292,7 +293,7 @@ public class UPTRLispReader extends LispReader {
 	}
 	
 	private Object lowerAST(IConstructor ast) {
-		
+		return null;
 	}
 
 	private IConstructor liftASTtoGrammar(INode ast) {
@@ -371,28 +372,6 @@ public class UPTRLispReader extends LispReader {
 		throw new AssertionError("Could not lift " + ast + " to Rascal value");
 	}
 
-	private IValue liftGrammar(Object node) {
-		// TODO: deal with namespaces properly.
-		if (node instanceof IPersistentList) {
-			ISeq seq = ((IPersistentList)node).seq();
-			String name = ((Symbol)seq.first()).getName();
-			IList args = liftSeq(seq.next());
-			return vf.constructor(MetaGrammar.getTypeForName(name), args);
-		}
-		if (node instanceof IPersistentVector) {
-			return liftSeq(((IPersistentVector)node).seq());
-		}
-		if (node instanceof Keyword) {
-			return vf.constructor(MetaGrammar.getTypeForName(((Keyword)node).getName()));
-		}
-		if (node instanceof Symbol) {
-			return vf.constructor(MetaGrammar.getTypeForName("nonTerminal"), vf.string(((Symbol)node).getName()));
-		}
-		if (node instanceof String) {
-			return vf.constructor(MetaGrammar.getTypeForName("literal"), vf.string((String) node));
-		}
-		throw new AssertionError("cannot lift Grammar node: " + node);
-	}
 
 	private ListPair lowerArgs(IList args) {
 		List<Object> elts = new ArrayList<Object>();
@@ -454,7 +433,6 @@ public class UPTRLispReader extends LispReader {
 		return new ListPair(newArgs.done(), elts);
 	}
 
-
 	
 	private Pair lower(IConstructor tree) {
 		if (TreeAdapter.isList(tree) || TreeAdapter.isOpt(tree)) {
@@ -464,9 +442,10 @@ public class UPTRLispReader extends LispReader {
 			return new Pair(tree, RT.vector(lp.objs.toArray()));
 		}
 		if (TreeAdapter.isAppl(tree)) {
-			List<String> names = Arrays.asList("symbol", "number", "integer", "float", "rational", "string", "char", "regexp", "form",
-						/* meta grammar specials (TODO: fix): */ "literal", "nonTerminal");
+			List<String> names = Arrays.asList("symbol", "number", "integer", "float", "rational", 
+					"string", "char", "regexp", "form");
 			if (names.contains(TreeAdapter.getConstructorName(tree))) {
+				// maybe factor out token reader in separate method
 				return read(tree); // depends on cons-labels!!!!!
 			}
 			
@@ -478,15 +457,6 @@ public class UPTRLispReader extends LispReader {
 			return new Pair(tree, RT.cons(Symbol.intern(name), PersistentList.create(lp.objs)));
 		}
 		throw new AssertionError("Tree is not an appl: " + tree);
-	}
-	
-	private IList liftSeq(ISeq seq) {
-		IListWriter w = vf.listWriter();
-		while (seq != null) {
-			w.append(liftGrammar(seq.first()));
-			seq = seq.next();
-		}
-		return w.done();
 	}
 	
 	private Object getGrammar(Object op) {
