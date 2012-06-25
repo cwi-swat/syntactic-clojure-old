@@ -74,24 +74,6 @@ public class FormAdapter {
 	public static boolean isNumber(IConstructor tree) {
 		return "number".equals(TreeAdapter.getConstructorName(tree));
 	}
-	
-	public static boolean isInteger(IConstructor tree) {
-		return "integer".equals(TreeAdapter.getConstructorName(tree)) 
-				|| "intbase".equals(TreeAdapter.getConstructorName(tree));
-	}
-
-	public static boolean isRatio(IConstructor tree) {
-		return "ratio".equals(TreeAdapter.getConstructorName(tree));
-	}
-
-	public static boolean isFloat(IConstructor tree) {
-		return "float".equals(TreeAdapter.getConstructorName(tree));
-	}
-	
-	public static boolean isBigDecimal(IConstructor tree) {
-		return "bigdecimal".equals(TreeAdapter.getConstructorName(tree));
-	}
-
 
 	public static boolean isArg(IConstructor tree) {
 		return "arg".equals(TreeAdapter.getConstructorName(tree));
