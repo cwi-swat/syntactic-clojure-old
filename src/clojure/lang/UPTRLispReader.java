@@ -436,27 +436,40 @@ public class UPTRLispReader extends LispReader {
 	
 	private Pair lower(IConstructor tree) {
 		if (TreeAdapter.isList(tree) || TreeAdapter.isOpt(tree)) {
-			// make vector			
+			// make vector for lists and optionals			
 			ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
 			tree = tree.set("args", lp.trees);
 			return new Pair(tree, RT.vector(lp.objs.toArray()));
 		}
-		if (TreeAdapter.isAppl(tree)) {
-			List<String> names = Arrays.asList("symbol", "number", "integer", "float", "rational", 
-					"string", "char", "regexp", "form");
-			if (names.contains(TreeAdapter.getConstructorName(tree))) {
-				// maybe factor out token reader in separate method
-				return read(tree); // depends on cons-labels!!!!!
+		if (TreeAdapter.isLexical(tree)) {
+			// hmm tree is not a form, so cannot reuse read
+			String kind = TreeAdapter.getSortName(tree);
+			if (kind.equals("Number")) {
+				return new Pair(tree, matchNumber(getLiteralValue(tree)));
 			}
-			
-			// an appl with a non-clojure label
-			ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
-			String name = TreeAdapter.getConstructorName(tree);
-			tree = tree.set("args", lp.trees);
-			// TODO: namespaces;
-			return new Pair(tree, RT.cons(Symbol.intern(name), PersistentList.create(lp.objs)));
+			if (kind.equals("Char")) {
+				return new Pair(tree, matchCharacter(getLiteralValue(tree).substring(1)));
+			}
+			if (kind.equals("String")) {
+				return new Pair(tree, readString(getLiteralValue(tree).substring(1)));
+			}
+			if (kind.equals("RegExp")) {
+				return new Pair(tree, readRegexp(getLiteralValue(tree).substring(2)));
+			}
+			if (kind.equals("Symbol")) {
+				return new Pair(tree, interpretToken(getLiteralValue(tree)));
+			}
+			throw new AssertionError("Unsupported lexical " + kind + ": " + tree);
 		}
-		throw new AssertionError("Tree is not an appl: " + tree);
+		if (TreeAdapter.getSortName(tree).equals("Form")) {
+			return read(tree);
+		}
+		// an appl with a non-clojure label (e.g. literal, call in EBNF)
+		ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
+		String name = TreeAdapter.getConstructorName(tree);
+		tree = tree.set("args", lp.trees);
+		// TODO: namespaces;
+		return new Pair(tree, RT.cons(Symbol.intern(name), PersistentList.create(lp.objs)));
 	}
 	
 	private Object getGrammar(Object op) {
