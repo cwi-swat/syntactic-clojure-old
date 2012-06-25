@@ -128,12 +128,12 @@ public class UPTRLispReader extends LispReader {
 				return readMap(tree);
 			}
 			if (isQuote(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.cons(QUOTE, lp.objs.get(0)));
+				return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
 			}
 			if (isDeref(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(DEREF, lp.objs.get(0)));
 			}
@@ -155,12 +155,12 @@ public class UPTRLispReader extends LispReader {
 				return readQuasi(tree);
 			}
 			if (isUnquote(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
 			}
 			if (isUnquotes(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
 			}
@@ -173,7 +173,7 @@ public class UPTRLispReader extends LispReader {
 	private Pair readQuasi(IConstructor tree) {
 		try {
 			Var.pushThreadBindings(RT.map(GENSYM_ENV, PersistentHashMap.EMPTY));
-			ListPair lp = readForms(TreeAdapter.getArgs(tree));
+			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 			tree = tree.set("args", lp.trees);
 			return new Pair(tree, SyntaxQuoteReader.syntaxQuote(lp.objs.get(0)));
 		}
@@ -244,7 +244,7 @@ public class UPTRLispReader extends LispReader {
 		if ((pl.objs.size() & 1) == 1) {
 			throw Util.runtimeException("Map literal must contain an even number of forms");
 		}
-		return new Pair(tree, RT.map(pl.objs));
+		return new Pair(tree, RT.map(pl.objs.toArray()));
 	}
 
 	private Pair readList(IConstructor tree, int line) {
@@ -400,24 +400,67 @@ public class UPTRLispReader extends LispReader {
 		return null;
 	}
 
+	private ListPair readArgs(IList list) {
+		List<Object> jlist = new ArrayList<Object>();
+        IListWriter newList = vf.listWriter();
+
+        for (int i = 0; i < list.length(); i++) {
+                IConstructor kid = (IConstructor) list.get(i);
+                if (!TreeAdapter.isLiteral(kid) && !TreeAdapter.isCILiteral(kid)) {
+                        Pair p = read(kid);
+                        if (p.obj != DISCARD) {
+                                jlist.add(p.obj);
+                        }
+                        newList.append(p.tree);
+                }
+                else {
+                        newList.append(kid);
+                }
+                if (i < list.length() - 2) {
+                	i++;
+                	newList.append(list.get(i)); // layout
+                }
+        }
+        return new ListPair(newList.done(), jlist);
+	}
+	
 	private ListPair readForms(IList list) {
 		List<Object> jlist = new ArrayList<Object>();
 		IListWriter newList = vf.listWriter();
 		
 		for (int i = 0; i < list.length(); i++) {
 			IConstructor kid = (IConstructor) list.get(i);
-			if (!TreeAdapter.isLiteral(kid) && !TreeAdapter.isCILiteral(kid)) {
-				Pair p = read(kid);
-				if (p.obj != DISCARD) {
-					jlist.add(p.obj);
+			if (TreeAdapter.isList(kid)) {
+				// Form*
+				IListWriter newKidArgs = vf.listWriter();
+				IList kidArgs = TreeAdapter.getArgs(kid);
+				for (int j = 0; j < kidArgs.length(); j++) {
+					IConstructor kidArg = (IConstructor)kidArgs.get(j);
+					if (!TreeAdapter.isLiteral(kidArg) && !TreeAdapter.isCILiteral(kidArg)) {
+						Pair p = read(kidArg);
+						if (p.obj != DISCARD) {
+							jlist.add(p.obj);
+						}
+						newKidArgs.append(p.tree);
+					}
+					else {
+						newKidArgs.append(kidArg);
+					}
+					if (j < kidArgs.length() - 2) { // layout never at end
+						j++;
+						newKidArgs.append(kidArgs.get(j));
+					}
 				}
-				newList.append(p.tree);
+				kid = kid.set("args", newKidArgs.done());
+				newList.append(kid);
 			}
 			else {
 				newList.append(kid);
 			}
-			i++;
-			newList.append(list.get(i)); // layout
+			if (i < list.length() - 2) {
+				i++;
+				newList.append(list.get(i)); // layout
+			}
 		}
 		return new ListPair(newList.done(), jlist);
 	}
@@ -430,7 +473,7 @@ public class UPTRLispReader extends LispReader {
 		
 		Pair p = read(metaTree);
 		Object meta = p.obj;
-		tree = tree.set(2, p.tree);
+		
 		
 		if (meta instanceof Symbol || meta instanceof String) {
 			meta = RT.map(RT.TAG_KEY, meta);
@@ -443,7 +486,22 @@ public class UPTRLispReader extends LispReader {
 
 		Pair argP = read(argTree);
 		Object o = argP.obj;
-		tree = tree.set(4, argP.tree);
+
+		
+		IListWriter newArgs = vf.listWriter();
+		for (int i = 0; i < args.length(); i++) {
+			if (i == 2) {
+				newArgs.append(p.tree);
+			}
+			else if (i == 4) {
+				newArgs.append(argP.tree);
+			}
+			else {
+				newArgs.append(args.get(i));
+			}
+		}
+				tree = tree.set("args", newArgs.done());
+
 		
 		if (o instanceof IMeta) {
 			int line = getLineNumber(argTree);
