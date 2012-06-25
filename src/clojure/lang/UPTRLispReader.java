@@ -49,6 +49,7 @@ import org.eclipse.imp.pdb.facts.type.Type;
 import org.eclipse.imp.pdb.facts.type.TypeFactory;
 import org.rascalmpl.interpreter.result.ICallableValue;
 import org.rascalmpl.interpreter.result.Result;
+import org.rascalmpl.values.clojure.FormAdapter;
 import org.rascalmpl.values.synclj.MetaGrammar;
 import org.rascalmpl.values.uptr.TreeAdapter;
 
@@ -93,73 +94,73 @@ public class UPTRLispReader extends LispReader {
 
 	public Pair read(IConstructor tree) {
 		try {
-			if (isNumber(tree)) {
+			if (FormAdapter.isNumber(tree)) {
 				return new Pair(tree, matchNumber(getLiteralValue(tree)));
 			}
-			if (isChar(tree)) {
+			if (FormAdapter.isChar(tree)) {
 				return new Pair(tree, matchCharacter(getLiteralValue(tree).substring(1)));
 			}
-			if (isString(tree)) {
+			if (FormAdapter.isString(tree)) {
 				return new Pair(tree, readString(getLiteralValue(tree).substring(1)));
 			}
-			if (isRegexp(tree)) {
+			if (FormAdapter.isRegexp(tree)) {
 				return new Pair(tree, readRegexp(getLiteralValue(tree).substring(2)));
 			}
-			if (isMeta(tree)) {
+			if (FormAdapter.isMeta(tree)) {
 				return readMeta(tree);
 			}
-			if (isSymbol(tree)) {
+			if (FormAdapter.isSymbol(tree)) {
 				return new Pair(tree, interpretToken(getLiteralValue(tree)));
 			}
-			if (isList(tree)) {
+			if (FormAdapter.isList(tree)) {
 				return readList(tree, getLineNumber(tree));
 			}
-			if (isSet(tree)) {
+			if (FormAdapter.isSet(tree)) {
 				ListPair lp = readForms(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, PersistentHashSet.createWithCheck(lp.objs));
 			}
-			if (isVector(tree)) {
+			if (FormAdapter.isVector(tree)) {
 				ListPair lp = readForms(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, LazilyPersistentVector.create(lp.objs));
 			}
-			if (isMap(tree)) {
+			if (FormAdapter.isMap(tree)) {
 				return readMap(tree);
 			}
-			if (isQuote(tree)) {
+			if (FormAdapter.isQuote(tree)) {
 				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
 			}
-			if (isDeref(tree)) {
+			if (FormAdapter.isDeref(tree)) {
 				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(DEREF, lp.objs.get(0)));
 			}
-			if (isFn(tree)) {
+			if (FormAdapter.isFn(tree)) {
 				return readFn(tree);
 			}
-			if (isArg(tree)) {
+			if (FormAdapter.isArg(tree)) {
 				return new Pair(tree, readArg(getLiteralValue(tree)));
 			}
-			if (isVar(tree)) {
+			if (FormAdapter.isVar(tree)) {
 				ListPair lp = readForms(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(THE_VAR, lp.objs.get(0)));
 			}
-			if (isDiscard(tree)) {
+			if (FormAdapter.isDiscard(tree)) {
 				return new Pair(tree, DISCARD);
 			}
-			if (isQQuote(tree)) {
+			if (FormAdapter.isQQuote(tree)) {
 				return readQuasi(tree);
 			}
-			if (isUnquote(tree)) {
+			if (FormAdapter.isUnquote(tree)) {
 				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
 			}
-			if (isUnquotes(tree)) {
+			if (FormAdapter.isUnquotes(tree)) {
 				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 				tree = tree.set("args", lp.trees);
 				return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
@@ -593,8 +594,8 @@ public class UPTRLispReader extends LispReader {
 					}
 				}
 				}
-				sb.append((char) ch);
 			}
+			sb.append((char) ch);
 		}
 		return sb.toString();
 	}
