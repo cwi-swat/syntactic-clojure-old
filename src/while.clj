@@ -28,7 +28,7 @@
    ]))
 
 (defmacro grammar 
-  {:grammar ebnf}
+  {:grammar :meta-grammar}
   [ast]
     (print ast))
 
