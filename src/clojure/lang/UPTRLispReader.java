@@ -89,7 +89,6 @@ public class UPTRLispReader extends LispReader {
 	}
 	
 	public Pair read(IConstructor tree) {
-		//System.err.println(getLiteralValue(tree));
 		if (TreeAdapter.isAmb(tree)) {
 			throw new AssertionError("Ambiguous tree: " + tree + "\n \"" + getLiteralValue(tree) + "\"");
 		}
@@ -274,9 +273,6 @@ public class UPTRLispReader extends LispReader {
 		}
 		ISeq seq = PersistentList.create(lp.objs).seq();
 		if (quoteNesting == 0) {
-			if (seq == null) {
-				System.err.println("Bla");
-			}
 			Object key = seq.first();
 			if (key instanceof Symbol) {
 				Object grammar = getGrammar(key);
@@ -312,29 +308,19 @@ public class UPTRLispReader extends LispReader {
 		return pt;
 	}
 	
-	private IConstructor parseUsingGrammar(Object grammar, String key, String string, ISourceLocation loc) {
+	private IConstructor parseUsingGrammar(Object grammar, String key, String src, ISourceLocation loc) {
 		// TODO: pass current namespace to parser functions.
+		System.out.println("Parsing language '" + src + "' as " + key);
 		if (grammar == META_GRAMMAR) {
-			return parseMetaGrammar(string, loc);
+			return parseMetaGrammar(src, loc);
 		}
 		else {
 			INode ast = (INode) clojure2node(grammar);
-			System.err.println(ast);
-			IConstructor pt = bridge.parse(ast, "bla", key, string, loc);
+			IConstructor pt = bridge.parse(ast, "bla", key, src, loc);
 			return pt;
 		}
 	}
 	
-	private Object lowerAST(IConstructor ast) {
-		return null;
-	}
-
-	private IConstructor liftASTtoGrammar(INode ast) {
-		//Convert this generic INode to typed MetaGrammar AST (as APIGenned)
-		//when encountering $nodes, lift to string.
-		return null;
-	}
-
 	private IValue clojure2node(Object ast) {
 		if (ast instanceof IPersistentList || ast instanceof Cons) {
 			ISeq seq = ((ISeq)ast).seq();
