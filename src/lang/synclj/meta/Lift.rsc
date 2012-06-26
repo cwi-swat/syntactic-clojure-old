@@ -1,7 +1,7 @@
 module lang::synclj::meta::Lift
 
 import lang::synclj::meta::AST;
-import lang::synclj::meta::Forms;
+import lang::clojure::syntax::Forms;
 import Grammar;
 import ParseTree;
 import List;
@@ -17,7 +17,7 @@ public map[Symbol, Production] CLOJURE() = (#Form).definitions;
 // 
 public str namespace(str ns, str name) = "<ns>$<name>";
 
-public Grammar lift(MetaGrammar g, str ns) = 
+public Grammar lift(EBNF g, str ns) = 
   Grammar::grammar({xtop}, (xtop : topRule) + lift(g.rules, ns) + CLOJURE())
   when 
     Symbol top := sort(namespace(g.rules[0].name, ns)),
@@ -32,28 +32,28 @@ public Production lift(Rule r, str ns)
        prod(label(a.name, sort(namespace(r.name, ns))),
            il([lift(e, ns) | e <- a.elements]), {}) | a <- r.alts }); 
 
-private str unquoteString(str s) = substring(s, 1, size(s) - 1);
+private str unquoteString(str s) = s; //substring(s, 1, size(s) - 1);
 
-public list[Symbol] lift(integer(), str ns) = \lex("Integer");
-public list[Symbol] lift(string(), str ns) = \lex("String");
-public list[Symbol] lift(number(), str ns) = \lex("Number");
-public list[Symbol] lift(float(), str ns) = \lex("Float");
-public list[Symbol] lift(lang::synclj::meta::AST::char(), str ns) = \lex("Char");
-public list[Symbol] lift(string(), str ns) = \lex("String");
-public list[Symbol] lift(keyword(), str ns) = \lex("Keyword");
-public list[Symbol] lift(symbol(), str ns) =  \lex("Symbol");
-public list[Symbol] lift(form(), str ns) = \sort("Form");
+public Symbol lift(integer(), str ns) = \lex("Integer");
+public Symbol lift(string(), str ns) = \lex("String");
+public Symbol lift(number(), str ns) = \lex("Number");
+public Symbol lift(float(), str ns) = \lex("Float");
+public Symbol lift(lang::synclj::meta::AST::char(), str ns) = \lex("Char");
+public Symbol lift(string(), str ns) = \lex("String");
+public Symbol lift(keyword(), str ns) = \lex("Keyword");
+public Symbol lift(symbol(), str ns) =  \lex("Symbol");
+public Symbol lift(form(), str ns) = \sort("Form");
 
 
 // add  conditional follow restrictions on these literals corresponding
 // to symbol/ident iff matching symbol? or always?
 // (this to enforce closure whitespace rule.
-public list[Symbol] lift(literal(s), str ns) = lit(unquoteString(s));
-public list[Symbol] lift(call(n), str ns) = sort(namespace(n, ns));
+public Symbol lift(literal(s), str ns) = lit(unquoteString(s));
+public Symbol lift(call(n), str ns) = sort(namespace(n, ns));
 
-public list[Symbol] lift(optional(x), str ns) = \opt(liftArg(x, ns));
-public list[Symbol] lift(repeat(x), str ns) = \iter-star-seps(lift(x, ns), [LAYOUT]);
-public list[Symbol] lift(repeatSep(x, s), str ns) = \iter-star-seps(lift(x, ns), makeSep(s)); 
+public Symbol lift(optional(x), str ns) = \opt(liftArg(x, ns));
+public Symbol lift(repeat(x), str ns) = \iter-star-seps(lift(x, ns), [LAYOUT]);
+public Symbol lift(repeatSep(x, s), str ns) = \iter-star-seps(lift(x, ns), makeSep(s)); 
 
 public list[Symbol] makeSep(str literal) = [LAYOUT,\lit(unquoteString(literal)),LAYOUT];
 
