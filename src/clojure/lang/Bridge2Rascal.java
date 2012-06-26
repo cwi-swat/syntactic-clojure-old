@@ -61,8 +61,8 @@ public class Bridge2Rascal {
 		}
 	}
 	
-	public IConstructor parse(INode grammar, String ns, String src, ISourceLocation loc) {
-		IConstructor rascalGrammar = (IConstructor) evaluator.call("node2Grammar", vf.string(ns), grammar);
+	public IConstructor parse(INode grammar, String ns, String key, String src, ISourceLocation loc) {
+		IConstructor rascalGrammar = (IConstructor) evaluator.call("node2Grammar", vf.string(ns), vf.string(key), grammar);
 		IString start = (IString) ((IConstructor)((ISet)rascalGrammar.get(0)).iterator().next()).get(0);
 		// TODO: do fix locs here? or in Rascal? Latter is probably better.
 		return parse(rascalGrammar, start.getValue(), src, loc);

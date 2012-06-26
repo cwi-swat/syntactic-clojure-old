@@ -17,12 +17,12 @@ public map[Symbol, Production] CLOJURE() = (#Form).definitions;
 // 
 public str namespace(str ns, str name) = "<ns>$<name>";
 
-public Grammar lift(EBNF g, str ns) = 
+public Grammar lift(EBNF g, str ns, str key) = 
   Grammar::grammar({xtop}, (xtop : topRule) + lift(g.rules, ns) + CLOJURE())
   when 
     Symbol top := sort(namespace(g.rules[0].name, ns)),
     Symbol xtop := sort(top.name + "_$$"),
-    Production topRule := choice(xtop, {prod(xtop, il([lit("("), top, lit(")")]),{\tag("Foldable"())})});
+    Production topRule := choice(xtop, {prod(xtop, il([lit(key), top]) ,{\tag("Foldable"())})});
     
 public map[Symbol, Production] lift(list[Rule] rs, str ns)
   = ( sort(namespace(r.name, ns)): lift(r, ns) | r <- rs );

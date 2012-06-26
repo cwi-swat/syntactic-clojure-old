@@ -37,6 +37,8 @@ import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.values.clojure.FormAdapter;
 import org.rascalmpl.values.uptr.TreeAdapter;
 
+import clojure.lang.UPTRLispReader.ListPair;
+
 public class UPTRLispReader extends LispReader {
 
 	private static final Keyword META_GRAMMAR = Keyword.intern("meta-grammar");
@@ -275,8 +277,9 @@ public class UPTRLispReader extends LispReader {
 			if (seq == null) {
 				System.err.println("Bla");
 			}
-			if (seq.first() instanceof Symbol) {
-				Object grammar = getGrammar(seq.first());
+			Object key = seq.first();
+			if (key instanceof Symbol) {
+				Object grammar = getGrammar(key);
 				if (grammar != null) {
 					// here we need full args, not just AST args.
 					// start at 4 and stop early to skip name and pre/post layout
@@ -285,13 +288,13 @@ public class UPTRLispReader extends LispReader {
 					// can both use args and lp.trees here.
 					String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
 
-					IConstructor pt = parseUsingGrammar(grammar, src, TreeAdapter.getLocation(tree));
+					IConstructor pt = parseUsingGrammar(grammar, ((Symbol) key).getName(), src, TreeAdapter.getLocation(tree));
 
 					// This is right vvvvvvv
 					args = lp.trees;
 					Pair lowered = lower(pt);
 					tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
-					seq = RT.list(seq.first(), lowered.obj); //RT.list(QUOTE, lowered.obj));
+					seq = RT.list(key, lowered.obj); //RT.list(QUOTE, lowered.obj));
 				}
 				else {
 					tree = tree.set("args", lp.trees);
@@ -309,7 +312,7 @@ public class UPTRLispReader extends LispReader {
 		return pt;
 	}
 	
-	private IConstructor parseUsingGrammar(Object grammar, String string, ISourceLocation loc) {
+	private IConstructor parseUsingGrammar(Object grammar, String key, String string, ISourceLocation loc) {
 		// TODO: pass current namespace to parser functions.
 		if (grammar == META_GRAMMAR) {
 			return parseMetaGrammar(string, loc);
@@ -317,7 +320,7 @@ public class UPTRLispReader extends LispReader {
 		else {
 			INode ast = (INode) clojure2node(grammar);
 			System.err.println(ast);
-			IConstructor pt = bridge.parse(ast, "bla", string, loc);
+			IConstructor pt = bridge.parse(ast, "bla", key, string, loc);
 			return pt;
 		}
 	}
@@ -468,6 +471,7 @@ public class UPTRLispReader extends LispReader {
 	private Pair lower(IConstructor tree) {
 		if (TreeAdapter.isList(tree) || TreeAdapter.isOpt(tree)) {
 			// make vector for lists and optionals			
+			// TODO: deal with sep lists
 			ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
 			tree = tree.set("args", lp.trees);
 			return new Pair(tree, RT.vector(lp.objs.toArray()));
@@ -493,6 +497,12 @@ public class UPTRLispReader extends LispReader {
 		}
 		if (TreeAdapter.getSortName(tree).equals("Form")) {
 			return read(tree);
+		}
+		if (TreeAdapter.getConstructorName(tree) == null) {
+			// can only occur at start
+			ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, lp.objs.get(0));
 		}
 		// an appl with a non-clojure label (e.g. literal, call in EBNF)
 		ListPair lp = lowerArgs(TreeAdapter.getArgs(tree));
