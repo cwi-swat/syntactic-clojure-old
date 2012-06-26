@@ -41,7 +41,16 @@ public Symbol lift(float(), str ns) = \lex("Float");
 public Symbol lift(lang::synclj::meta::AST::char(), str ns) = \lex("Char");
 public Symbol lift(string(), str ns) = \lex("String");
 public Symbol lift(keyword(), str ns) = \lex("Keyword");
+
+// conditional(lex("Symbol"), delete(keywords("Reserved")) + namespace
+// add choice(sort(namespace("Reserved", ns)), {
+//    prod(keywords(namespace("Reserved", ns)), <literal>
+// })
+// for each literal that matches with Symbol
+// parse(#Symbol, <literal>) succeeds;
+// can do this for all tokens!
 public Symbol lift(symbol(), str ns) =  \lex("Symbol");
+
 public Symbol lift(form(), str ns) = \sort("Form");
 
 
