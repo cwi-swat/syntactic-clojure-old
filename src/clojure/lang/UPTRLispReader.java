@@ -16,14 +16,12 @@ import static org.rascalmpl.values.clojure.FormAdapter.getLiteralValue;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lang.synclj.meta.EBNFParser;
-
 
 import org.eclipse.imp.pdb.facts.IConstructor;
 import org.eclipse.imp.pdb.facts.IList;
@@ -34,7 +32,6 @@ import org.eclipse.imp.pdb.facts.ISetWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValue;
 import org.eclipse.imp.pdb.facts.IValueFactory;
-import org.eclipse.imp.pdb.facts.impl.fast.ListWriter;
 import org.rascalmpl.interpreter.result.ICallableValue;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
@@ -46,6 +43,7 @@ public class UPTRLispReader extends LispReader {
 	private static final Keyword META_GRAMMAR = Keyword.intern("meta-grammar");
 	private static final Object DISCARD = new Object();
 	private final IValueFactory vf;
+	private int quoteNesting = 0;
 	
 	public UPTRLispReader(IValueFactory vf, ICallableValue metaParser, ICallableValue objectParser) {
 		this.vf = vf;
@@ -115,9 +113,15 @@ public class UPTRLispReader extends LispReader {
 				return readMap(tree);
 			}
 			if (FormAdapter.isQuote(tree)) {
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
+				try {
+					quoteNesting++;
+					ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+					tree = tree.set("args", lp.trees);
+					return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
+				}
+				finally {
+					quoteNesting--;
+				}
 			}
 			if (FormAdapter.isDeref(tree)) {
 				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
@@ -142,14 +146,26 @@ public class UPTRLispReader extends LispReader {
 				return readQuasi(tree);
 			}
 			if (FormAdapter.isUnquote(tree)) {
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
+				try {
+					quoteNesting--;
+					ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+					tree = tree.set("args", lp.trees);
+					return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
+				}
+				finally {
+					quoteNesting++;
+				}
 			}
 			if (FormAdapter.isUnquotes(tree)) {
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
+				try {
+					quoteNesting--;
+					ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+					tree = tree.set("args", lp.trees);
+					return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
+				}
+				finally {
+					quoteNesting++;
+				}
 			}
 			throw new RuntimeException("Cannot read tree: " + getLiteralValue(tree));
 		} catch (Exception e) {
@@ -160,11 +176,13 @@ public class UPTRLispReader extends LispReader {
 	private Pair readQuasi(IConstructor tree) {
 		try {
 			Var.pushThreadBindings(RT.map(GENSYM_ENV, PersistentHashMap.EMPTY));
+			quoteNesting++;
 			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 			tree = tree.set("args", lp.trees);
 			return new Pair(tree, SyntaxQuoteReader.syntaxQuote(lp.objs.get(0)));
 		}
 		finally {
+			quoteNesting--;
 			Var.popThreadBindings();
 		}
 	}
@@ -229,7 +247,8 @@ public class UPTRLispReader extends LispReader {
 		ListPair pl = readForms(TreeAdapter.getArgs(tree));
 		tree = tree.set("args", pl.trees);
 		if ((pl.objs.size() & 1) == 1) {
-			throw Util.runtimeException("Map literal must contain an even number of forms");
+			pl.objs.add(null);
+			//throw Util.runtimeException("Map literal must contain an even number of forms");
 		}
 		return new Pair(tree, RT.map(pl.objs.toArray()));
 	}
@@ -240,27 +259,29 @@ public class UPTRLispReader extends LispReader {
 		}
 		IList args = TreeAdapter.getArgs(tree);
 		ListPair lp = readForms(args);
-		IPersistentList seq = PersistentList.create(lp.objs);
-		if (seq.peek() instanceof Symbol) {
-			Object grammar = getGrammar(seq.peek());
-			if (grammar != null) {
-				// here we need full args, not just AST args.
-				// start at 4 and stop early to skip name and pre/post layout
-				// "(" _ Form* _ ")"
-				//  0  1  2    3   4 
-				// can both use args and lp.trees here.
-				String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
-				
-				IConstructor pt = parseUsingGrammar(grammar, src, TreeAdapter.getLocation(tree));
-								
-				// This is right vvvvvvv
-				args = lp.trees;
-				Pair lowered = lower(pt);
-				tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
-				seq = (IPersistentList) RT.list(seq.peek(), lowered.obj);
-			}
-			else {
-				tree = tree.set("args", lp.trees);
+		ISeq seq = PersistentList.create(lp.objs).seq();
+		if (quoteNesting == 0) {
+			if (seq.first() instanceof Symbol) {
+				Object grammar = getGrammar(seq.first());
+				if (grammar != null) {
+					// here we need full args, not just AST args.
+					// start at 4 and stop early to skip name and pre/post layout
+					// "(" _ Form* _ ")"
+					//  0  1  2    3   4 
+					// can both use args and lp.trees here.
+					String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
+
+					IConstructor pt = parseUsingGrammar(grammar, src, TreeAdapter.getLocation(tree));
+
+					// This is right vvvvvvv
+					args = lp.trees;
+					Pair lowered = lower(pt);
+					tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
+					seq = RT.list(seq.first(), lowered.obj);
+				}
+				else {
+					tree = tree.set("args", lp.trees);
+				}
 			}
 		}
 		IObj s = (IObj) seq;
