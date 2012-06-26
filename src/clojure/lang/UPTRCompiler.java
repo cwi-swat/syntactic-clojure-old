@@ -109,7 +109,6 @@ public class UPTRCompiler extends Compiler {
 			IList args = TreeAdapter.getArgs(file2);
 			// Probably only this is the list of forms; don't forget to fix below.
 			IList forms = TreeAdapter.getArgs((IConstructor) args.get(0));
-//			IList forms3 = TreeAdapter.getArgs((IConstructor)forms.get(0));
 
 
 			IListWriter newArgs = vf.listWriter();
@@ -128,7 +127,7 @@ public class UPTRCompiler extends Compiler {
 			}
 			// Fix tree
 			file2 = file2.set("args", newArgs.done());
-			file = file.set(1, file2);
+			file = file.set("args", vf.list(TreeAdapter.getArgs(file).get(0),file2, TreeAdapter.getArgs(file).get(2)));
 
 			}
 		catch(LispReader.ReaderException e)

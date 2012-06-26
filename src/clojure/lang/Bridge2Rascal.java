@@ -48,6 +48,12 @@ public class Bridge2Rascal {
 		monitor.startJob("Loading parser generator", 100, 139);
 		// TODO: fix this; should be generically usable. Not just from this project.
 		String wd = System.getProperty("user.dir");
+		if (!wd.endsWith("syntactic-clojure")) {
+			// If running from eclipse rascal, wd is the startup dir of eclipse
+			// we, for now (:-S), assume that eclipse was started one dir up
+			// from the workspace where our project resides. UGH!
+			wd = wd + "/workspace/syntactic-clojure";
+		}
 		evaluator.addRascalSearchPath(URI.create("file://" + wd + "/src"));
 		try {
 			evaluator.doImport(monitor, "lang::rascal::grammar::ParserGenerator");
