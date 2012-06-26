@@ -6,5 +6,6 @@
 	<classpathentry kind="src" path="clojure/src/resources"/>
 	<classpathentry kind="src" path="clojure/src/clj"/>
 	<classpathentry kind="src" path="clojure/src/jvm"/>
+	<classpathentry kind="lib" path="lib/rascal.jar"/>
 	<classpathentry kind="output" path="clojure/target/classes"/>
 </classpath>
