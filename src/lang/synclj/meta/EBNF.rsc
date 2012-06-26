@@ -17,10 +17,10 @@ syntax Alt
   
 syntax Exp
   = literal: String
-  | call: Symbol
+  | call: Symbol \ Tokens
   | optional: "[" Exp "]"
   | repeat: "{" Exp "}" 
-  | repeatSep: "{" Exp Literal "}"
+  | repeatSep: "{" Exp String "}"
   | string: "string"
   | integer: "integer"
   | number: "number"
