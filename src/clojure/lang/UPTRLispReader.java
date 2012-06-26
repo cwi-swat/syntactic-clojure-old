@@ -32,7 +32,6 @@ import org.eclipse.imp.pdb.facts.ISetWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValue;
 import org.eclipse.imp.pdb.facts.IValueFactory;
-import org.rascalmpl.interpreter.result.ICallableValue;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.values.clojure.FormAdapter;
@@ -45,8 +44,14 @@ public class UPTRLispReader extends LispReader {
 	private final IValueFactory vf;
 	private int quoteNesting = 0;
 	
-	public UPTRLispReader(IValueFactory vf, ICallableValue metaParser, ICallableValue objectParser) {
+	// Whoa, a global...
+	private static Bridge2Rascal bridge = null;
+	
+	public UPTRLispReader(IValueFactory vf) {
 		this.vf = vf;
+		if (bridge == null) {
+			bridge = new Bridge2Rascal(vf);
+		}
 	}
 	
 	// TODO: unreadable reader (?), eval reader, data readers, ctor reader, record
@@ -72,105 +77,111 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
+	public Pair read2(IConstructor tree) {
+		try {
+			return read(tree);
+		}
+		catch (Exception e) {
+			throw new ReaderException(TreeAdapter.getLocation(tree).getBeginLine(), e);
+		}
+	}
+	
 	public Pair read(IConstructor tree) {
 		//System.err.println(getLiteralValue(tree));
 		if (TreeAdapter.isAmb(tree)) {
 			throw new AssertionError("Ambiguous tree: " + tree + "\n \"" + getLiteralValue(tree) + "\"");
 		}
-		try {
-			if (FormAdapter.isNumber(tree)) {
-				return new Pair(tree, matchNumber(getLiteralValue(tree)));
-			}
-			if (FormAdapter.isChar(tree)) {
-				return new Pair(tree, matchCharacter(getLiteralValue(tree).substring(1)));
-			}
-			if (FormAdapter.isString(tree)) {
-				return new Pair(tree, readString(getLiteralValue(tree).substring(1)));
-			}
-			if (FormAdapter.isRegexp(tree)) {
-				return new Pair(tree, readRegexp(getLiteralValue(tree).substring(2)));
-			}
-			if (FormAdapter.isMeta(tree)) {
-				return readMeta(tree);
-			}
-			if (FormAdapter.isSymbol(tree)) {
-				return new Pair(tree, interpretToken(getLiteralValue(tree)));
-			}
-			if (FormAdapter.isList(tree)) {
-				return readList(tree, getLineNumber(tree));
-			}
-			if (FormAdapter.isSet(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, PersistentHashSet.createWithCheck(lp.objs));
-			}
-			if (FormAdapter.isVector(tree)) {
-				ListPair lp = readForms(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, LazilyPersistentVector.create(lp.objs));
-			}
-			if (FormAdapter.isMap(tree)) {
-				return readMap(tree);
-			}
-			if (FormAdapter.isQuote(tree)) {
-				try {
-					quoteNesting++;
-					ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-					tree = tree.set("args", lp.trees);
-					return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
-				}
-				finally {
-					quoteNesting--;
-				}
-			}
-			if (FormAdapter.isDeref(tree)) {
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(DEREF, lp.objs.get(0)));
-			}
-			if (FormAdapter.isFn(tree)) {
-				return readFn(tree);
-			}
-			if (FormAdapter.isArg(tree)) {
-				return new Pair(tree, readArg(getLiteralValue(tree)));
-			}
-			if (FormAdapter.isVar(tree)) {
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(THE_VAR, lp.objs.get(0)));
-			}
-			if (FormAdapter.isDiscard(tree)) {
-				return new Pair(tree, DISCARD);
-			}
-			if (FormAdapter.isQQuote(tree)) {
-				return readQuasi(tree);
-			}
-			if (FormAdapter.isUnquote(tree)) {
-				try {
-					quoteNesting--;
-					ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-					tree = tree.set("args", lp.trees);
-					return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
-				}
-				finally {
-					quoteNesting++;
-				}
-			}
-			if (FormAdapter.isUnquotes(tree)) {
-				try {
-					quoteNesting--;
-					ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-					tree = tree.set("args", lp.trees);
-					return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
-				}
-				finally {
-					quoteNesting++;
-				}
-			}
-			throw new RuntimeException("Cannot read tree: " + getLiteralValue(tree));
-		} catch (Exception e) {
-			throw new ReaderException(getLineNumber(tree), e);
+		if (FormAdapter.isNumber(tree)) {
+			return new Pair(tree, matchNumber(getLiteralValue(tree)));
 		}
+		if (FormAdapter.isChar(tree)) {
+			return new Pair(tree, matchCharacter(getLiteralValue(tree).substring(1)));
+		}
+		if (FormAdapter.isString(tree)) {
+			return new Pair(tree, readString(getLiteralValue(tree).substring(1)));
+		}
+		if (FormAdapter.isRegexp(tree)) {
+			return new Pair(tree, readRegexp(getLiteralValue(tree).substring(2)));
+		}
+		if (FormAdapter.isMeta(tree)) {
+			return readMeta(tree);
+		}
+		if (FormAdapter.isSymbol(tree)) {
+			return new Pair(tree, interpretToken(getLiteralValue(tree)));
+		}
+		if (FormAdapter.isList(tree)) {
+			return readList(tree, getLineNumber(tree));
+		}
+		if (FormAdapter.isSet(tree)) {
+			ListPair lp = readForms(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, PersistentHashSet.createWithCheck(lp.objs));
+		}
+		if (FormAdapter.isVector(tree)) {
+			ListPair lp = readForms(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, LazilyPersistentVector.create(lp.objs));
+		}
+		if (FormAdapter.isMap(tree)) {
+			return readMap(tree);
+		}
+		if (FormAdapter.isQuote(tree)) {
+			try {
+				quoteNesting++;
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+				tree = tree.set("args", lp.trees);
+				return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
+			}
+			finally {
+				quoteNesting--;
+			}
+		}
+		if (FormAdapter.isDeref(tree)) {
+			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, RT.list(DEREF, lp.objs.get(0)));
+		}
+		if (FormAdapter.isFn(tree)) {
+			return readFn(tree);
+		}
+		if (FormAdapter.isArg(tree)) {
+			return new Pair(tree, readArg(getLiteralValue(tree)));
+		}
+		if (FormAdapter.isVar(tree)) {
+			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, RT.list(THE_VAR, lp.objs.get(0)));
+		}
+		if (FormAdapter.isDiscard(tree)) {
+			return new Pair(tree, DISCARD);
+		}
+		if (FormAdapter.isQQuote(tree)) {
+			return readQuasi(tree);
+		}
+		if (FormAdapter.isUnquote(tree)) {
+			try {
+				quoteNesting--;
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+				tree = tree.set("args", lp.trees);
+				return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
+			}
+			finally {
+				quoteNesting++;
+			}
+		}
+		if (FormAdapter.isUnquotes(tree)) {
+			try {
+				quoteNesting--;
+				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+				tree = tree.set("args", lp.trees);
+				return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
+			}
+			finally {
+				quoteNesting++;
+			}
+		}
+		throw new RuntimeException("Cannot read tree: " + getLiteralValue(tree));
+	
 	}
 
 	private Pair readQuasi(IConstructor tree) {
@@ -254,13 +265,16 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	private Pair readList(IConstructor tree, int line) {
-		if (TreeAdapter.getASTArgs(tree).isEmpty()) {
-			return new Pair(tree, PersistentList.EMPTY);
-		}
 		IList args = TreeAdapter.getArgs(tree);
 		ListPair lp = readForms(args);
+		if (lp.objs.isEmpty()) {
+			return new Pair(tree, PersistentList.EMPTY);
+		}
 		ISeq seq = PersistentList.create(lp.objs).seq();
 		if (quoteNesting == 0) {
+			if (seq == null) {
+				System.err.println("Bla");
+			}
 			if (seq.first() instanceof Symbol) {
 				Object grammar = getGrammar(seq.first());
 				if (grammar != null) {
@@ -277,7 +291,7 @@ public class UPTRLispReader extends LispReader {
 					args = lp.trees;
 					Pair lowered = lower(pt);
 					tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
-					seq = RT.list(seq.first(), lowered.obj);
+					seq = RT.list(seq.first(), lowered.obj); //RT.list(QUOTE, lowered.obj));
 				}
 				else {
 					tree = tree.set("args", lp.trees);
@@ -301,15 +315,10 @@ public class UPTRLispReader extends LispReader {
 			return parseMetaGrammar(string, loc);
 		}
 		else {
-			INode ast = (INode) liftClojureAST(grammar);
+			INode ast = (INode) clojure2node(grammar);
 			System.err.println(ast);
-			//IConstructor rgram = liftASTtoGrammar(ast);
-			
-//			IConstructor ast = (IConstructor) liftGrammar(grammar);
-//			Result<IValue> result = objectParser.call(new Type[] {MetaGrammar.MetaGrammar, tf.stringType()}, 
-//					new IValue[] {ast, vf.string(string)});
-//			return (IConstructor) result.getValue();
-			throw new AssertionError("Not yet implemented");
+			IConstructor pt = bridge.parse(ast, "bla", string, loc);
+			return pt;
 		}
 	}
 	
@@ -323,9 +332,9 @@ public class UPTRLispReader extends LispReader {
 		return null;
 	}
 
-	private IValue liftClojureAST(Object ast) {
-		if (ast instanceof IPersistentList) {
-			ISeq seq = ((IPersistentList)ast).seq();
+	private IValue clojure2node(Object ast) {
+		if (ast instanceof IPersistentList || ast instanceof Cons) {
+			ISeq seq = ((ISeq)ast).seq();
 			String name = ((Symbol)seq.first()).getName();
 			seq = seq.next();
 			if (seq == null) {
@@ -333,7 +342,7 @@ public class UPTRLispReader extends LispReader {
 			}
 			IValue[] arr = new IValue[seq.count()];
 			for (int i = 0; seq != null; i++) {
-				IValue kid = liftClojureAST(seq.first());
+				IValue kid = clojure2node(seq.first());
 				arr[i] = kid;
 				seq = seq.next();
 			}
@@ -343,7 +352,7 @@ public class UPTRLispReader extends LispReader {
 			ISeq seq = ((IPersistentVector)ast).seq();
 			IListWriter w = vf.listWriter();
 			while (seq != null) {
-				IValue kid = liftClojureAST(seq.first());
+				IValue kid = clojure2node(seq.first());
 				w.append(kid);
 				seq = seq.next();
 			}
@@ -353,7 +362,7 @@ public class UPTRLispReader extends LispReader {
 			ISeq seq = ((IPersistentSet)ast).seq();
 			ISetWriter w = vf.setWriter();
 			while (seq != null) {
-				IValue kid = liftClojureAST(seq.first());
+				IValue kid = clojure2node(seq.first());
 				w.insert(kid);
 				seq = seq.next();
 			}
@@ -364,7 +373,7 @@ public class UPTRLispReader extends LispReader {
 			IMapWriter w = vf.mapWriter();
 			while (seq != null) {
 				IMapEntry entry = (IMapEntry) seq.first();
-				w.put(liftClojureAST(entry.getKey()),liftClojureAST(entry.getValue()));
+				w.put(clojure2node(entry.getKey()),clojure2node(entry.getValue()));
 				seq = seq.next();
 			}
 			return w.done();
@@ -415,6 +424,7 @@ public class UPTRLispReader extends LispReader {
 		return new ListPair(newArgs.done(), elts);
 	}
 	
+	@SuppressWarnings("unused")
 	private ListPair lowerList(IList args) {
 		List<Object> elts = new ArrayList<Object>();
 		IListWriter newArgs = vf.listWriter();
@@ -463,7 +473,6 @@ public class UPTRLispReader extends LispReader {
 			return new Pair(tree, RT.vector(lp.objs.toArray()));
 		}
 		if (TreeAdapter.isLexical(tree)) {
-			// hmm tree is not a form, so cannot reuse read
 			String kind = TreeAdapter.getSortName(tree);
 			if (kind.equals("Number")) {
 				return new Pair(tree, matchNumber(getLiteralValue(tree)));

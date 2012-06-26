@@ -14,7 +14,6 @@ import org.eclipse.imp.pdb.facts.IList;
 import org.eclipse.imp.pdb.facts.IListWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValueFactory;
-import org.rascalmpl.interpreter.result.ICallableValue;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.gtd.util.ArrayList;
@@ -34,13 +33,9 @@ public class UPTRCompiler extends Compiler {
 	private static final Type VAR_TYPE = Type.getType(Var.class);
 	
 	private final IValueFactory vf;
-	private final ICallableValue metaParser;
-	private final ICallableValue objectParser;
 	
-	public UPTRCompiler(IValueFactory vf, ICallableValue metaParser, ICallableValue objectParser) {
+	public UPTRCompiler(IValueFactory vf) {
 		this.vf = vf;
-		this.metaParser = metaParser;
-		this.objectParser = objectParser;
 	}
 	
 	public static void compileWithRascal(Reader rdr, String sourcePath, String sourceName) throws IOException {
@@ -50,7 +45,7 @@ public class UPTRCompiler extends Compiler {
 //		Evaluator eval = new Evaluator(vf, new PrintWriter(System.err), new PrintWriter(System.out), scope, heap);
 //		eval.doImport(eval, "IO");
 //		System.err.println("imported IO");
-		UPTRCompiler c = new UPTRCompiler(vf, null, null);
+		UPTRCompiler c = new UPTRCompiler(vf);
 		c.compile2(rdr, sourcePath, sourceName);
 	}
 	
@@ -61,7 +56,7 @@ public class UPTRCompiler extends Compiler {
 //		Evaluator eval = new Evaluator(vf, new PrintWriter(System.err), new PrintWriter(System.out), scope, heap);
 //		eval.doImport(eval, "IO");
 //		System.err.println("imported IO");
-		UPTRCompiler c = new UPTRCompiler(vf, null, null);
+		UPTRCompiler c = new UPTRCompiler(vf);
 		return c.load2(rdr, sourcePath, sourceName);
 	}
 	
@@ -96,7 +91,7 @@ public class UPTRCompiler extends Compiler {
 				       ,RT.DATA_READERS, RT.DATA_READERS.deref()
 	                        ));
 
-		UPTRLispReader reader = new UPTRLispReader(vf, (ICallableValue) metaParser, (ICallableValue) objectParser);
+		UPTRLispReader reader = new UPTRLispReader(vf);
 		
 		try
 			{
@@ -156,7 +151,7 @@ public class UPTRCompiler extends Compiler {
 		ISourceLocation loc = TreeAdapter.getLocation(file);
 		int lineNumber = loc.getBeginLine();
 		
-		UPTRLispReader reader = new UPTRLispReader(vf, (ICallableValue) metaParser, (ICallableValue) objectParser);
+		UPTRLispReader reader = new UPTRLispReader(vf);
 
 		
 		if (COMPILE_PATH.deref() == null)
