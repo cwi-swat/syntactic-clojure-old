@@ -21,9 +21,7 @@ import org.rascalmpl.interpreter.control_exceptions.Throw;
 import org.rascalmpl.interpreter.env.GlobalEnvironment;
 import org.rascalmpl.interpreter.env.ModuleEnvironment;
 import org.rascalmpl.interpreter.utils.JavaBridge;
-import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
-import org.rascalmpl.parser.gtd.exception.ParseError;
 import org.rascalmpl.parser.gtd.result.action.IActionExecutor;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
 
@@ -70,7 +68,6 @@ public class Bridge2Rascal {
 	public IConstructor parse(INode grammar, String ns, String key, String src, ISourceLocation loc) {
 		IConstructor rascalGrammar = (IConstructor) evaluator.call("node2Grammar", vf.string(ns), vf.string(key), grammar);
 		IString start = (IString) ((IConstructor)((ISet)rascalGrammar.get(0)).iterator().next()).get(0);
-		// TODO: do fix locs here? or in Rascal? Latter is probably better.
 		return parse(rascalGrammar, start.getValue(), src, loc);
 	}
 	
@@ -85,20 +82,10 @@ public class Bridge2Rascal {
 			return (IConstructor) parser.parse(sort, loc.getURI(),
 					src.toCharArray(), MY_ACTION_EXECUTOR,
 					new NodeToUPTR(), null);
-		} catch (ParseError pe) {
-			ISourceLocation errorLoc = vf
-					.sourceLocation(pe.getLocation(), pe.getOffset(),
-							pe.getLength(), pe.getBeginLine() + 1,
-							pe.getEndLine() + 1, pe.getBeginColumn(),
-							pe.getEndColumn());
-			throw RuntimeExceptionFactory.parseError(errorLoc,
-					evaluator.getCurrentAST(), evaluator.getStackTrace());
 		} catch (InstantiationException e) {
-			throw new ImplementationError("parser generator:" + e.getMessage(),
-					e);
+			throw new ImplementationError("parser generator:" + e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			throw new ImplementationError("parser generator:" + e.getMessage(),
-					e);
+			throw new ImplementationError("parser generator:" + e.getMessage(),	e);
 		}
 	}
 

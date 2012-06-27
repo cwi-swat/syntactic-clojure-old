@@ -15,6 +15,7 @@ import static org.rascalmpl.values.clojure.FormAdapter.getLineNumber;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,15 +29,20 @@ import org.eclipse.imp.pdb.facts.IList;
 import org.eclipse.imp.pdb.facts.IListWriter;
 import org.eclipse.imp.pdb.facts.IMapWriter;
 import org.eclipse.imp.pdb.facts.INode;
+import org.eclipse.imp.pdb.facts.ISet;
 import org.eclipse.imp.pdb.facts.ISetWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValue;
 import org.eclipse.imp.pdb.facts.IValueFactory;
+import org.eclipse.imp.pdb.facts.visitors.VisitorException;
 import org.rascalmpl.parser.gtd.IGTD;
+import org.rascalmpl.parser.gtd.exception.ParseError;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.values.Message;
 import org.rascalmpl.values.clojure.FormAdapter;
+import org.rascalmpl.values.uptr.Factory;
 import org.rascalmpl.values.uptr.TreeAdapter;
+import org.rascalmpl.values.uptr.visitors.TreeVisitor;
 
 public class UPTRLispReader extends LispReader {
 
@@ -56,6 +62,7 @@ public class UPTRLispReader extends LispReader {
 	}
 	
 	// TODO: unreadable reader (?), eval reader, data readers, ctor reader, record
+	// TODO: communicate tot the RascalMonitor.
 	
 	// Result tuples.
 	public static class Pair {
@@ -78,20 +85,24 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
-	public Object error(String message, IConstructor tree) {
+	private Object error(String message, IConstructor tree) {
+		return error(message, TreeAdapter.getLocation(tree));
+	}
+	
+	private Object error(String message, ISourceLocation loc) {
 		if (runningInIDE()) {
-			recordError(message, tree);
+			recordError(message, loc);
 			return null;
 		}
-		throw new ReaderException(TreeAdapter.getLocation(tree).getBeginLine(), message);
+		throw new ReaderException(loc.getBeginLine(), message);
 	}
 
-	private void recordError(String message, IConstructor tree) {
-		errors.insert(vf.constructor(Message.Message_error, TreeAdapter.getLocation(tree), vf.string(message)));
+	private void recordError(String message, ISourceLocation loc) {
+		errors.insert(vf.constructor(Message.Message_error, loc, vf.string(message)));
 	}
 
 	private boolean runningInIDE() {
-		return errors == null;
+		return errors != null;
 	}
 	
 	public Pair read(IConstructor tree) {
@@ -264,20 +275,34 @@ public class UPTRLispReader extends LispReader {
 		if (key instanceof Symbol) {
 			Object grammar = getGrammar(key);
 			if (grammar != null) {
-				// here we need full args, not just AST args.
-				// start at 4 and stop early to skip name and pre/post layout
-				// "(" _ Form* _ ")"
-				//  0  1  2    3   4 
-				// can both use args and lp.trees here.
-				String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
-
-				IConstructor pt = parseUsingGrammar(grammar, ((Symbol) key).getName(), src, TreeAdapter.getLocation(tree));
-
-				// This is right vvvvvvv
-				args = lp.trees;
-				Pair lowered = lower(pt);
-				tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
-				seq = RT.list(key, lowered.obj); //RT.list(QUOTE, lowered.obj));
+				ListPair emb = parseEmbedding(grammar, key, lp.trees);
+				if (emb != null) { // no parse error
+					tree = tree.set("args", emb.trees);
+					seq = RT.list(emb.objs.get(0), emb.objs.get(1));
+				}
+				else {
+					// quote the token as a list to prevent arity exception.
+					seq = RT.list(seq.first(), RT.list(QUOTE, seq.next()));
+				}
+//				IConstructor embedding = (IConstructor) lp.trees.get(2);
+//				String src = TreeAdapter.yield(embedding);
+//				ISourceLocation embeddingLoc = TreeAdapter.getLocation(embedding);
+//				
+//				try {
+//					IConstructor pt = parseUsingGrammar(grammar, ((Symbol) key).getName(), src, embeddingLoc);
+//					pt = fixLocs(pt, embeddingLoc);
+//					// This is right vvvvvvv
+//					args = lp.trees;
+//					Pair lowered = lower(pt);
+//					tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
+//					seq = RT.list(key, lowered.obj); //RT.list(QUOTE, lowered.obj));
+//				}
+//				catch (ParseError e) {
+//					ISourceLocation loc = vf.sourceLocation(embeddingLoc.getURI(), e.getOffset(),
+//							e.getLength(), e.getBeginLine(), e.getEndLine(), 
+//							e.getBeginColumn(), e.getEndColumn());
+//					error("Parse error", fixLoc(loc, embeddingLoc));
+//				}
 			}
 			else {
 				tree = tree.set("args", lp.trees);
@@ -287,21 +312,159 @@ public class UPTRLispReader extends LispReader {
 		return new Pair(tree, s.withMeta(RT.map(RT.LINE_KEY, line)));
 	}
 
+	
+	private ListPair parseEmbedding(Object grammar, Object key, IList args) {
+		// here we need full args, not just AST args.
+		// start at 4 and stop early to skip name and pre/post layout
+		// "(" _ Form* _ ")"
+		//  0  1  2    3   4 
+		// can both use args and lp.trees here.
+		
+		IConstructor embedding = (IConstructor) args.get(2);
+		String src = TreeAdapter.yield(embedding);
+		ISourceLocation embeddingLoc = TreeAdapter.getLocation(embedding);
+		
+		try {
+			IConstructor pt = parseUsingGrammar(grammar, ((Symbol) key).getName(), src, embeddingLoc);
+			pt = fixLocs(pt, embeddingLoc);
+			// This is right vvvvvvv
+			Pair lowered = lower(pt);
+			return new ListPair(vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)),
+					Arrays.asList(key, lowered.obj));
+			//tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
+//			seq = RT.list(key, lowered.obj); //RT.list(QUOTE, lowered.obj));
+		}
+		catch (ParseError e) {
+			ISourceLocation loc = vf.sourceLocation(e.getLocation(), e.getOffset(),
+					e.getLength(), e.getBeginLine() + 1, e.getEndLine() + 1, 
+					e.getBeginColumn(), e.getEndColumn());
+			error("Parse error", fixLoc(loc, embeddingLoc));
+		}
+		return null;
+	}
+	
+	private IConstructor fixLocs(IConstructor tree, ISourceLocation off) {
+		try {
+			return (IConstructor) tree.accept(new LocFixer(off));
+		} catch (VisitorException e) {
+			error("INTERNAL: Could not fix locations in " + tree, tree);
+			return tree;
+		}
+	}
+	
+	class LocFixer extends TreeVisitor {
+		private final ISourceLocation off;
+
+		public LocFixer(ISourceLocation off) {
+			this.off = off;
+		}
+		
+		private IConstructor fix(IConstructor tree) {
+			ISourceLocation loc = TreeAdapter.getLocation(tree);
+			if (loc != null) {
+				loc = fixLoc(loc, off);
+				return tree.setAnnotation(Factory.Location, loc);
+			}
+			return tree;
+		}
+		
+		@Override
+		public IConstructor visitTreeAppl(IConstructor arg) throws VisitorException {
+			IList args = TreeAdapter.getArgs(arg);
+			IListWriter newArgs = vf.listWriter();
+			for (IValue x: args) {
+				newArgs.append(x.accept(this));
+			}
+			arg.set("args", newArgs.done());
+			return fix(arg);
+		}
+
+		@Override
+		public IConstructor visitTreeAmb(IConstructor arg)
+				throws VisitorException {
+			ISet alts = TreeAdapter.getAlternatives(arg);
+			ISetWriter newAlts = vf.setWriter();
+			for (IValue x: alts) {
+				newAlts.insert(x.accept(this));
+			}
+			arg.set("alternatives", newAlts.done());
+			return fix(arg);
+		}
+
+		@Override
+		public IConstructor visitTreeChar(IConstructor arg)
+				throws VisitorException {
+			return arg;
+		}
+
+		@Override
+		public IConstructor visitTreeCycle(IConstructor arg)
+				throws VisitorException {
+			return fix(arg);
+		}
+
+		@Override
+		public IConstructor visitTreeError(IConstructor arg)
+				throws VisitorException {
+			throw new AssertionError("No support for error trees");
+		}
+
+		@Override
+		public IConstructor visitTreeErrorAmb(IConstructor arg)
+				throws VisitorException {
+			throw new AssertionError("No support for error trees");
+		}
+
+		@Override
+		public IConstructor visitTreeErrorCycle(IConstructor arg)
+				throws VisitorException {
+			throw new AssertionError("No support for error trees");
+		}
+
+		@Override
+		public IConstructor visitTreeExpected(IConstructor arg)
+				throws VisitorException {
+			throw new AssertionError("No support for error trees");
+		}
+
+	}
+	
+	private ISourceLocation fixLoc(ISourceLocation l, ISourceLocation off) {
+		l = vf.sourceLocation(l.getURI(), l.getOffset() + off.getOffset(), l.getLength(),
+				l.getBeginLine(), l.getEndLine(), l.getBeginColumn(), l.getEndColumn());
+		if (l.getBeginLine() == 0) {
+			if (l.getBeginLine() == l.getEndLine()) {
+				l = vf.sourceLocation(l.getURI(), l.getOffset(), l.getLength(),
+						l.getBeginLine(), l.getEndLine(), l.getBeginColumn() + off.getBeginColumn(), 
+						l.getEndColumn() + off.getBeginColumn());
+			}
+			else {
+				l = vf.sourceLocation(l.getURI(), l.getOffset(), l.getLength(),
+						l.getBeginLine(), l.getEndLine(), l.getBeginColumn() + off.getBeginColumn(), l.getEndColumn());
+			}
+		}
+		l = vf.sourceLocation(l.getURI(), l.getOffset(), l.getLength(),
+				l.getBeginLine() + off.getBeginLine() - 1, 
+				l.getEndLine() + off.getBeginLine() - 1, 
+				l.getBeginColumn(), l.getEndColumn());
+		return l;
+	}
+	
 	private IConstructor parseMetaGrammar(String src, ISourceLocation loc) {
 		IGTD parser = new EBNFParser();
 		IConstructor pt = (IConstructor) parser.parse("EBNF", loc.getURI(), src.toCharArray(), new NodeToUPTR());
-		// todo: fix locs
-		return pt;
+		return fixLocs(pt, loc);
 	}
 	
 	private IConstructor parseUsingGrammar(Object grammar, String key, String src, ISourceLocation loc) {
 		// TODO: pass current namespace to parser functions.
-		System.out.println("Parsing language '" + src + "' as " + key);
+		// TODO: communicate with RascalMonitor here.
 		if (grammar == META_GRAMMAR) {
 			return parseMetaGrammar(src, loc);
 		}
 		else {
 			INode ast = (INode) clojure2node(grammar);
+			System.err.println(ast);
 			IConstructor pt = bridge.parse(ast, "bla", key, src, loc);
 			return pt;
 		}
@@ -482,7 +645,9 @@ public class UPTRLispReader extends LispReader {
 		tree = tree.set("args", lp.trees);
 		// TODO: namespaces;
 		ISourceLocation location = TreeAdapter.getLocation(tree);
-		IPersistentMap locAnno = RT.map(Keyword.intern("offset"), location.getOffset(),
+		IPersistentMap locAnno = RT.map(
+				RT.LINE_KEY, location.getBeginLine(), // mimick clojure
+				Keyword.intern("offset"), location.getOffset(),
 				Keyword.intern("length"), location.getLength(),
 				Keyword.intern("begin-line"), location.getBeginLine(),
 				Keyword.intern("end-line"), location.getEndLine(),

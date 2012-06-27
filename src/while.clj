@@ -10,7 +10,7 @@
 
 (def while-grammar (grammar
    Prog = prog {Stat} 
-   Stat = assign symbol "=" form
+   Stat = symbol "=" form
         | skip "skip"
         | if "if" form "then" Prog "else" Prog "fi"
         | while "while" form "do" Prog "od" 

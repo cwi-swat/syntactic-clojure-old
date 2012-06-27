@@ -53,7 +53,7 @@ public class UPTRCompiler extends Compiler {
 		new UPTRCompiler(vf, errors).loadPT(fileRef, path, new File(path).getName());
 		
 		// return the updated parse tree.
-		return fileRef[0].setAnnotation("message", errors.done());
+		return fileRef[0].setAnnotation("messages", errors.done());
 	}
 
 	
