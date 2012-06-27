@@ -1,0 +1,28 @@
+
+TODO
+====
+
+
+- Optimize reading of list by first reading the first next form,
+  checking whether it represents a macro, and if so *not* reading the
+  rest arguments. Otherwise, nested language fragments are parsed
+  multiple times (because read works innermost).
+  
+- FIX: what happens when the Clojure parser returns an error. 
+
+- FIX: categories and folding.
+
+- FIX: Plain clojure syntax highlighting is too minimal now.
+
+- Think about the need for priorities.
+  
+- Support for checking and compiling of languages.
+
+- Add hover-docs for grammars, showing the derived abstract syntax
+
+- Add hover-docs to show the AST (or compiled code?)
+
+- Add hyperlinks to grammar invocations linking to the parsing macro. 
+
+- Make a toplevel macro to define language with checking and
+  compiling. 
