@@ -98,7 +98,7 @@ public class UPTRLispReader extends LispReader {
 	}
 
 	private void recordError(String message, ISourceLocation loc) {
-		errors.insert(vf.constructor(Message.Message_error, loc, vf.string(message)));
+		errors.insert(vf.constructor(Message.Message_error, vf.string(message), loc));
 	}
 
 	private boolean runningInIDE() {

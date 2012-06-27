@@ -27,7 +27,7 @@
     x = n
     while (> n 0) do
        x = (+ x x)
-       n = (- n 1)
+       n = (grammar Bla = bla {X})
     od
     return x))
 

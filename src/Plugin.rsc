@@ -6,10 +6,12 @@ import IO;
 import Message;
 import ParseTree;
 
+private str SYNCLJ = "Syntactic Clojure";
+
 public void main() {
-  registerLanguage("Syntactic Clojure", "sclj", Tree(str src, loc org) {
-    Tree pt = loadForRascal(src, org);
-    iprintln(pt@messages);
-    return pt;
-  });
+  registerLanguage(SYNCLJ, "sclj", loadForRascal);
+  contribs = {
+    annotator(Tree(Tree t) { return t; })
+  };
+  registerContributions(SYNCLJ, contribs);
 }
