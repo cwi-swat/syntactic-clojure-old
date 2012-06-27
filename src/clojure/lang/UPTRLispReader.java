@@ -11,7 +11,6 @@ package clojure.lang;
  **/
 
 import static org.rascalmpl.values.clojure.FormAdapter.getLineNumber;
-import static org.rascalmpl.values.clojure.FormAdapter.getLiteralValue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import lang.synclj.meta.EBNFParser;
 
@@ -34,26 +34,25 @@ import org.eclipse.imp.pdb.facts.IValue;
 import org.eclipse.imp.pdb.facts.IValueFactory;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
+import org.rascalmpl.values.Message;
 import org.rascalmpl.values.clojure.FormAdapter;
 import org.rascalmpl.values.uptr.TreeAdapter;
-
-import clojure.lang.UPTRLispReader.ListPair;
 
 public class UPTRLispReader extends LispReader {
 
 	private static final Keyword META_GRAMMAR = Keyword.intern("meta-grammar");
 	private static final Object DISCARD = new Object();
 	private final IValueFactory vf;
-	private int quoteNesting = 0;
+	private final ISetWriter errors;
 	
-	// Whoa, a global...
 	private static Bridge2Rascal bridge = null;
 	
-	public UPTRLispReader(IValueFactory vf) {
+	public UPTRLispReader(IValueFactory vf, ISetWriter errors) {
 		this.vf = vf;
 		if (bridge == null) {
 			bridge = new Bridge2Rascal(vf);
 		}
+		this.errors = errors;
 	}
 	
 	// TODO: unreadable reader (?), eval reader, data readers, ctor reader, record
@@ -79,36 +78,44 @@ public class UPTRLispReader extends LispReader {
 		}
 	}
 
-	public Pair read2(IConstructor tree) {
-		try {
-			return read(tree);
+	public Object error(String message, IConstructor tree) {
+		if (runningInIDE()) {
+			recordError(message, tree);
+			return null;
 		}
-		catch (Exception e) {
-			throw new ReaderException(TreeAdapter.getLocation(tree).getBeginLine(), e);
-		}
+		throw new ReaderException(TreeAdapter.getLocation(tree).getBeginLine(), message);
+	}
+
+	private void recordError(String message, IConstructor tree) {
+		errors.insert(vf.constructor(Message.Message_error, TreeAdapter.getLocation(tree), vf.string(message)));
+	}
+
+	private boolean runningInIDE() {
+		return errors == null;
 	}
 	
 	public Pair read(IConstructor tree) {
 		if (TreeAdapter.isAmb(tree)) {
-			throw new AssertionError("Ambiguous tree: " + tree + "\n \"" + getLiteralValue(tree) + "\"");
+			error("Ambiguous tree: >" + tree + "<, \"" + TreeAdapter.yield(tree) + "\"", tree);
+			return new Pair(tree, null);
 		}
 		if (FormAdapter.isNumber(tree)) {
-			return new Pair(tree, matchNumber(getLiteralValue(tree)));
+			return new Pair(tree, matchNumber(TreeAdapter.yield(tree)));
 		}
 		if (FormAdapter.isChar(tree)) {
-			return new Pair(tree, matchCharacter(getLiteralValue(tree).substring(1)));
+			return new Pair(tree, matchCharacter(TreeAdapter.yield(tree).substring(1)));
 		}
 		if (FormAdapter.isString(tree)) {
-			return new Pair(tree, readString(getLiteralValue(tree).substring(1)));
+			return new Pair(tree, readString(tree));
 		}
 		if (FormAdapter.isRegexp(tree)) {
-			return new Pair(tree, readRegexp(getLiteralValue(tree).substring(2)));
+			return new Pair(tree, readRegexp(tree));
 		}
 		if (FormAdapter.isMeta(tree)) {
 			return readMeta(tree);
 		}
 		if (FormAdapter.isSymbol(tree)) {
-			return new Pair(tree, interpretToken(getLiteralValue(tree)));
+			return new Pair(tree, interpretToken(TreeAdapter.yield(tree)));
 		}
 		if (FormAdapter.isList(tree)) {
 			return readList(tree, getLineNumber(tree));
@@ -127,15 +134,9 @@ public class UPTRLispReader extends LispReader {
 			return readMap(tree);
 		}
 		if (FormAdapter.isQuote(tree)) {
-			try {
-				quoteNesting++;
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
-			}
-			finally {
-				quoteNesting--;
-			}
+			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, RT.list(QUOTE, lp.objs.get(0)));
 		}
 		if (FormAdapter.isDeref(tree)) {
 			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
@@ -146,7 +147,7 @@ public class UPTRLispReader extends LispReader {
 			return readFn(tree);
 		}
 		if (FormAdapter.isArg(tree)) {
-			return new Pair(tree, readArg(getLiteralValue(tree)));
+			return new Pair(tree, readArg(tree));
 		}
 		if (FormAdapter.isVar(tree)) {
 			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
@@ -160,46 +161,33 @@ public class UPTRLispReader extends LispReader {
 			return readQuasi(tree);
 		}
 		if (FormAdapter.isUnquote(tree)) {
-			try {
-				quoteNesting--;
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
-			}
-			finally {
-				quoteNesting++;
-			}
+			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, RT.list(UNQUOTE, lp.objs.get(0)));
 		}
 		if (FormAdapter.isUnquotes(tree)) {
-			try {
-				quoteNesting--;
-				ListPair lp = readArgs(TreeAdapter.getArgs(tree));
-				tree = tree.set("args", lp.trees);
-				return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
-			}
-			finally {
-				quoteNesting++;
-			}
+			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
+			tree = tree.set("args", lp.trees);
+			return new Pair(tree, RT.list(UNQUOTE_SPLICING, lp.objs.get(0)));
 		}
-		throw new RuntimeException("Cannot read tree: " + getLiteralValue(tree));
-	
+		error("Unknown read error " + TreeAdapter.yield(tree), tree);
+		return new Pair(tree, null);
 	}
 
 	private Pair readQuasi(IConstructor tree) {
 		try {
 			Var.pushThreadBindings(RT.map(GENSYM_ENV, PersistentHashMap.EMPTY));
-			quoteNesting++;
 			ListPair lp = readArgs(TreeAdapter.getArgs(tree));
 			tree = tree.set("args", lp.trees);
 			return new Pair(tree, SyntaxQuoteReader.syntaxQuote(lp.objs.get(0)));
 		}
 		finally {
-			quoteNesting--;
 			Var.popThreadBindings();
 		}
 	}
 
-	private Object readArg(String token) {
+	private Object readArg(IConstructor tree) {
+		String token = TreeAdapter.yield(tree);
 		if (ARG_ENV.deref() == null) {
 			return interpretToken(token);
 		}
@@ -215,12 +203,13 @@ public class UPTRLispReader extends LispReader {
 				return registerArg(Integer.parseInt(num));
 			}
 		}
-		throw new IllegalStateException("arg literal must be %, %& or %integer");
+		return error("arg literal must be %, %& or %integer", tree);
 	}
 
 	private Pair readFn(IConstructor tree) {
 		if(ARG_ENV.deref() != null) {
-			throw new IllegalStateException("Nested #()s are not allowed");
+			error("Nested #()s are not allowed", tree);
+			return new Pair(tree, null);
 		}
 		try {
 			Var.pushThreadBindings(RT.map(ARG_ENV, PersistentTreeMap.EMPTY));
@@ -260,7 +249,6 @@ public class UPTRLispReader extends LispReader {
 		tree = tree.set("args", pl.trees);
 		if ((pl.objs.size() & 1) == 1) {
 			pl.objs.add(null);
-			//throw Util.runtimeException("Map literal must contain an even number of forms");
 		}
 		return new Pair(tree, RT.map(pl.objs.toArray()));
 	}
@@ -272,29 +260,27 @@ public class UPTRLispReader extends LispReader {
 			return new Pair(tree, PersistentList.EMPTY);
 		}
 		ISeq seq = PersistentList.create(lp.objs).seq();
-		if (quoteNesting == 0) {
-			Object key = seq.first();
-			if (key instanceof Symbol) {
-				Object grammar = getGrammar(key);
-				if (grammar != null) {
-					// here we need full args, not just AST args.
-					// start at 4 and stop early to skip name and pre/post layout
-					// "(" _ Form* _ ")"
-					//  0  1  2    3   4 
-					// can both use args and lp.trees here.
-					String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
+		Object key = seq.first();
+		if (key instanceof Symbol) {
+			Object grammar = getGrammar(key);
+			if (grammar != null) {
+				// here we need full args, not just AST args.
+				// start at 4 and stop early to skip name and pre/post layout
+				// "(" _ Form* _ ")"
+				//  0  1  2    3   4 
+				// can both use args and lp.trees here.
+				String src = TreeAdapter.yield((IConstructor) lp.trees.get(2));
 
-					IConstructor pt = parseUsingGrammar(grammar, ((Symbol) key).getName(), src, TreeAdapter.getLocation(tree));
+				IConstructor pt = parseUsingGrammar(grammar, ((Symbol) key).getName(), src, TreeAdapter.getLocation(tree));
 
-					// This is right vvvvvvv
-					args = lp.trees;
-					Pair lowered = lower(pt);
-					tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
-					seq = RT.list(key, lowered.obj); //RT.list(QUOTE, lowered.obj));
-				}
-				else {
-					tree = tree.set("args", lp.trees);
-				}
+				// This is right vvvvvvv
+				args = lp.trees;
+				Pair lowered = lower(pt);
+				tree = tree.set("args", vf.list(args.get(0), args.get(1), lowered.tree, args.get(3), args.get(4)));
+				seq = RT.list(key, lowered.obj); //RT.list(QUOTE, lowered.obj));
+			}
+			else {
+				tree = tree.set("args", lp.trees);
 			}
 		}
 		IObj s = (IObj) seq;
@@ -465,19 +451,19 @@ public class UPTRLispReader extends LispReader {
 		if (TreeAdapter.isLexical(tree)) {
 			String kind = TreeAdapter.getSortName(tree);
 			if (kind.equals("Number")) {
-				return new Pair(tree, matchNumber(getLiteralValue(tree)));
+				return new Pair(tree, matchNumber(TreeAdapter.yield(tree)));
 			}
 			if (kind.equals("Char")) {
-				return new Pair(tree, matchCharacter(getLiteralValue(tree).substring(1)));
+				return new Pair(tree, matchCharacter(TreeAdapter.yield(tree).substring(1)));
 			}
 			if (kind.equals("String")) {
-				return new Pair(tree, readString(getLiteralValue(tree).substring(1)));
+				return new Pair(tree, readString(tree));
 			}
 			if (kind.equals("RegExp")) {
-				return new Pair(tree, readRegexp(getLiteralValue(tree).substring(2)));
+				return new Pair(tree, readRegexp(tree));
 			}
 			if (kind.equals("Symbol")) {
-				return new Pair(tree, interpretToken(getLiteralValue(tree)));
+				return new Pair(tree, interpretToken(TreeAdapter.yield(tree)));
 			}
 			throw new AssertionError("Unsupported lexical " + kind + ": " + tree);
 		}
@@ -586,8 +572,8 @@ public class UPTRLispReader extends LispReader {
 		} else if (meta instanceof Keyword) {
 			meta = RT.map(meta, RT.T);
 		} else if (!(meta instanceof IPersistentMap)) {
-			throw new IllegalArgumentException(
-					"Metadata must be Symbol,Keyword,String or Map");
+			error("Metadata must be Symbol, Keyword, String or Map", metaTree);
+			meta = null;
 		}
 
 		Pair argP = read(argTree);
@@ -606,8 +592,13 @@ public class UPTRLispReader extends LispReader {
 				newArgs.append(args.get(i));
 			}
 		}
-				tree = tree.set("args", newArgs.done());
+		tree = tree.set("args", newArgs.done());
 
+		if (meta == null) {
+			// if meta wasn't of the correct type, just skip it.
+			return new Pair(tree, o);
+		}
+		
 		
 		if (o instanceof IMeta) {
 			int line = getLineNumber(argTree);
@@ -625,12 +616,13 @@ public class UPTRLispReader extends LispReader {
 			}
 			return new Pair(tree, ((IObj) o).withMeta((IPersistentMap) ometa));
 		} else {
-			throw new IllegalArgumentException(
-					"Metadata can only be applied to IMetas");
+			error("Metadata can only be applied to IMetas", argTree);
+			return new Pair(tree, o);
 		}
 	}
 
-	private Object readRegexp(String str) {
+	private Object readRegexp(IConstructor tree) {
+		String str = TreeAdapter.yield(tree).substring(2);
 		StringBuilder sb = new StringBuilder();
 		int i = 0;
 		for (int ch = str.charAt(i); ch != '"'; ch = str.charAt(++i)) {
@@ -641,10 +633,21 @@ public class UPTRLispReader extends LispReader {
 				sb.append((char) ch);
 			}
 		}
-		return Pattern.compile(sb.toString());
+		try {
+			return Pattern.compile(sb.toString());
+		}
+		catch (PatternSyntaxException e) {
+			error(e.getMessage(), tree);
+			return null;
+		}
 	}
 
-	private Object readString(String str) {
+	private Object readString(IConstructor tree) {
+		/*
+		 * as per the Clojure grammar, the exceptions here 
+		 * can never occur.
+		 */
+		String str = TreeAdapter.yield(tree).substring(1);
 		StringBuilder sb = new StringBuilder();
 		int i = 0;
 		for (int ch = str.charAt(i); ch != '"'; ch = str.charAt(++i)) {
@@ -676,9 +679,7 @@ public class UPTRLispReader extends LispReader {
 				case 'u': {
 					ch = str.charAt(++i);
 					if (Character.digit(ch, 16) == -1) {
-						throw Util
-								.runtimeException("Invalid unicode escape: \\u"
-										+ (char) ch);
+						throw Util.runtimeException("Invalid unicode escape: \\u" + (char) ch);
 					}
 					ch = readUnicodeChar(str.substring(i, i + 4), 0, 4, 16);
 					i += 4;
@@ -689,13 +690,10 @@ public class UPTRLispReader extends LispReader {
 						ch = readUnicodeChar(str.substring(i, i + 3), 0, 3, 8);
 						i += 3;
 						if (ch > 0377) {
-							throw Util
-									.runtimeException("Octal escape sequence must be in range [0, 377].");
+							throw Util.runtimeException("Octal escape sequence must be in range [0, 377].");
 						}
 					} else {
-						throw Util
-								.runtimeException("Unsupported escape character: \\"
-										+ (char) ch);
+						throw Util.runtimeException("Unsupported escape character: \\" + (char) ch);
 					}
 				}
 				}
@@ -857,8 +855,8 @@ public class UPTRLispReader extends LispReader {
 	public class ReaderException extends RuntimeException {
 		final int line;
 
-		public ReaderException(int line, Throwable cause) {
-			super(cause);
+		public ReaderException(int line, String message) {
+			super(message);
 			this.line = line;
 		}
 	}

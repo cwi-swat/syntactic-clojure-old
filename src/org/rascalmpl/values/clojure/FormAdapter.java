@@ -50,17 +50,17 @@ public class FormAdapter {
 		return "string".equals(TreeAdapter.getConstructorName(tree));
 	}
 	
-	public static String getLiteralValue(IConstructor tree) {
-		StringWriter w = new StringWriter();
-		try {
-			unparse(tree, w);
-		} catch (FactTypeUseException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return w.toString();
-	}
+//	public static String getLiteralValue(IConstructor tree) {
+//		StringWriter w = new StringWriter();
+//		try {
+//			unparse(tree, w);
+//		} catch (FactTypeUseException e) {
+//			throw new RuntimeException(e);
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
+//		return w.toString();
+//	}
 
 	public static boolean isRegexp(IConstructor tree) {
 		return "regexp".equals(TreeAdapter.getConstructorName(tree));
