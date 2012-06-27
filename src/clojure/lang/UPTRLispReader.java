@@ -481,7 +481,17 @@ public class UPTRLispReader extends LispReader {
 		String name = TreeAdapter.getConstructorName(tree);
 		tree = tree.set("args", lp.trees);
 		// TODO: namespaces;
-		return new Pair(tree, RT.cons(Symbol.intern(name), PersistentList.create(lp.objs)));
+		ISourceLocation location = TreeAdapter.getLocation(tree);
+		IPersistentMap locAnno = RT.map(Keyword.intern("offset"), location.getOffset(),
+				Keyword.intern("length"), location.getLength(),
+				Keyword.intern("begin-line"), location.getBeginLine(),
+				Keyword.intern("end-line"), location.getEndLine(),
+				Keyword.intern("begin-column"), location.getBeginColumn(),
+				Keyword.intern("end-column"), location.getEndColumn()
+				);
+		IPersistentList args = PersistentList.create(lp.objs);
+		ISeq appl = RT.cons(Symbol.intern(name), args);
+		return new Pair(tree, ((IObj)appl).withMeta(locAnno));
 	}
 	
 	private Object getGrammar(Object op) {
