@@ -6,7 +6,15 @@ import lang::synclj::meta::AST;
 
 public EBNF node2EBNF("grammar"(rs)) = grammar([ node2Rule(r) | r <- rs]);
 public Rule node2Rule("rule"("$symbol"(n), as)) = rule(n, [ node2Alt(a) | a <- as ]);
-public Alt node2Alt("alt"("$symbol"(n), es)) = alt(n, [ node2Exp(e) | e <- es ]);
+
+public Alt node2Alt("alt"("$symbol"(n), es, [])) = 
+  alt(n, [ node2Exp(e) | e <- es ], []);
+
+public Alt node2Alt("alt"("$symbol"(n), es, ["hints"(hs)])) = 
+  alt(n, [ node2Exp(e) | e <- es ], [hints([ node2Hint(h) | h <- hs ])]);
+
+public Hint node2Hint("class"("$symbol"(n))) = class(n);
+public Hint node2Hint("folding"()) = folding();
 
 public Exp node2Exp("literal"(str s)) = literal(s);
 public Exp node2Exp("call"("$symbol"(s))) = call(s);

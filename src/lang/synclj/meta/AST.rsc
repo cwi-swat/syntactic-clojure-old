@@ -9,7 +9,16 @@ data Rule
   ;
   
 data Alt
-  = alt(str name, list[Exp] elements)
+  = alt(str name, list[Exp] elements, list[Hints] hints)
+  ;
+  
+data Hints
+  = hints(list[Hint] hints)
+  ;
+  
+data Hint
+  = class(str name)
+  | folding()
   ;
 
 data Exp

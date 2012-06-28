@@ -10,10 +10,10 @@
 
 (def while-grammar (grammar
    Prog = prog {Stat} 
-   Stat = symbol "=" form
-        | skip "skip"
-        | if "if" form "then" Prog "else" Prog "fi"
-        | while "while" form "do" Prog "od" 
+   Stat = assign symbol "=" form
+        | skip "skip" (class MetaAmbiguity)
+        | if "if" form "then" Prog "else" Prog "fi" (folding)
+        | while "while" form "do" Prog "od" (folding) 
         | return "return" form))
         
 (defmacro til

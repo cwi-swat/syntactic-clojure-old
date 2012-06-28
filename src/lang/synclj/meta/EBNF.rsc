@@ -12,8 +12,18 @@ syntax Rule
   ;
 
 syntax Alt
-  = alt: Symbol Exp* // ident is the cons attribute
+  = alt: Symbol Exp* Hints? // ident is the cons attribute
   ;
+
+syntax Hints
+  = hints: "(" Hint* ")"
+  ;
+  
+syntax Hint
+  = class: "class" Symbol
+  | folding: "folding"
+  ; 
+
   
 syntax Exp
   = literal: String

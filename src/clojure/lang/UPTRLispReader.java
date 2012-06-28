@@ -453,7 +453,8 @@ public class UPTRLispReader extends LispReader {
 	private IConstructor parseMetaGrammar(String src, ISourceLocation loc) {
 		IGTD parser = new EBNFParser();
 		IConstructor pt = (IConstructor) parser.parse("EBNF", loc.getURI(), src.toCharArray(), new NodeToUPTR());
-		return fixLocs(pt, loc);
+		System.err.println(pt);
+		return pt;
 	}
 	
 	private IConstructor parseUsingGrammar(Object grammar, String key, String src, ISourceLocation loc) {
@@ -464,7 +465,7 @@ public class UPTRLispReader extends LispReader {
 		}
 		else {
 			INode ast = (INode) clojure2node(grammar);
-			System.err.println(ast);
+//			System.err.println(ast);
 			IConstructor pt = bridge.parse(ast, "bla", key, src, loc);
 			return pt;
 		}

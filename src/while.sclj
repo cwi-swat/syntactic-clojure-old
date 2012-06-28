@@ -11,9 +11,9 @@
 (def while-grammar (grammar
    Prog = prog {Stat} 
    Stat = assign symbol "=" form
-        | skip "skip"
-        | if "if" form "then" Prog "else" Prog "fi"
-        | while "while" form "do" Prog "od" 
+        | skip "skip" (class Bla)
+        | if "if" form "then" Prog "else" Prog "fi" (folding)
+        | while "while" form "do" Prog "od" (folding) 
         | return "return" form))
         
 (defmacro til
@@ -25,6 +25,7 @@
   
 (def mult (til
     x = n
+    skip
     while (> n 0) do
        x = (+ x x)
        n = (grammar Bla = bla {X})

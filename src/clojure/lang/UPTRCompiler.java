@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.util.Arrays;
 
 import lang.clojure.syntax.ClojureParser;
 
@@ -14,7 +15,9 @@ import org.eclipse.imp.pdb.facts.ISetWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IString;
 import org.eclipse.imp.pdb.facts.IValueFactory;
+import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
+import org.rascalmpl.parser.gtd.exception.ParseError;
 import org.rascalmpl.parser.gtd.util.ArrayList;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.values.Message;
@@ -72,9 +75,14 @@ public class UPTRCompiler extends Compiler {
 			String sourceName) {
 		IGTD gtd = new ClojureParser();
 		IConstructor file = (IConstructor) gtd.parse(START_SORT, URI.create(sourcePath), input, new NodeToUPTR());
-		
-		IConstructor filePt = (IConstructor)file;
-		return loadPT(new IConstructor[] {filePt}, sourcePath, sourceName);
+		return loadPT(new IConstructor[] {file}, sourcePath, sourceName);
+//		catch (ParseError e) {
+//			throw RuntimeExceptionFactory.parseError(
+//					vf.sourceLocation(e.getLocation(), 
+//							e.getOffset(), e.getLength(), e.getBeginLine(), e.getEndLine(),
+//							e.getBeginColumn(), e.getEndColumn()), null, 
+//							Arrays.toString(e.getStackTrace()));
+//		}
 	}
 	
 	public Object loadPT(IConstructor[] fileRef, String sourcePath, String sourceName) {
@@ -135,7 +143,7 @@ public class UPTRCompiler extends Compiler {
 			file = file.set("args", vf.list(TreeAdapter.getArgs(file).get(0),file2, TreeAdapter.getArgs(file).get(2)));
 
 			}
-		catch(LispReader.ReaderException e)
+		catch(UPTRLispReader.ReaderException e)
 			{
 			throw new CompilerException(sourcePath, e.line, e.getCause());
 			}
