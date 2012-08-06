@@ -37,7 +37,8 @@ import org.eclipse.imp.pdb.facts.IValueFactory;
 import org.eclipse.imp.pdb.facts.visitors.VisitorException;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.gtd.exception.ParseError;
-import org.rascalmpl.parser.uptr.NodeToUPTR;
+import org.rascalmpl.parser.gtd.result.out.DefaultNodeFlattener;
+import org.rascalmpl.parser.uptr.UPTRNodeFactory;
 import org.rascalmpl.values.Message;
 import org.rascalmpl.values.clojure.FormAdapter;
 import org.rascalmpl.values.uptr.Factory;
@@ -451,8 +452,10 @@ public class UPTRLispReader extends LispReader {
 	}
 	
 	private IConstructor parseMetaGrammar(String src, ISourceLocation loc) {
-		IGTD parser = new EBNFParser();
-		IConstructor pt = (IConstructor) parser.parse("EBNF", loc.getURI(), src.toCharArray(), new NodeToUPTR());
+		IGTD<IConstructor,IConstructor,ISourceLocation> parser = new EBNFParser();
+		IConstructor pt = (IConstructor) parser.parse("EBNF", loc.getURI(), src.toCharArray(), 
+				new DefaultNodeFlattener<IConstructor, IConstructor, ISourceLocation>(),
+				new UPTRNodeFactory());
 		System.err.println(pt);
 		return pt;
 	}

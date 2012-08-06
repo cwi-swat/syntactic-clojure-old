@@ -22,7 +22,8 @@ import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.gtd.exception.ParseError;
 import org.rascalmpl.parser.gtd.result.action.IActionExecutor;
-import org.rascalmpl.parser.uptr.NodeToUPTR;
+import org.rascalmpl.parser.gtd.result.out.DefaultNodeFlattener;
+import org.rascalmpl.parser.uptr.UPTRNodeFactory;
 // cannot import rascal function action executor
 //import org.rascalmpl.parser.uptr.action.*; ///???
 
@@ -31,11 +32,11 @@ public class PGen {
 	private JavaBridge bridge;
 	private final IString PKG;
 	private final IValueFactory vf;
-	private final Map<IConstructor,Class<IGTD>> cache;
+	private final Map<IConstructor,Class<IGTD<IConstructor,IConstructor,ISourceLocation>>> cache;
 
 	public PGen(IValueFactory values){
 		PKG = values.string("lang.syntinel.parsers");
-		cache = new HashMap<IConstructor, Class<IGTD>>();
+		cache = new HashMap<IConstructor, Class<IGTD<IConstructor,IConstructor,ISourceLocation>>>();
 		vf = values;
 		GlobalEnvironment heap = new GlobalEnvironment();
 		ModuleEnvironment scope = new ModuleEnvironment("___parsergenerator_tvds___", heap);
@@ -61,10 +62,12 @@ public class PGen {
 			cache.put(grammar, buildParser(grammar, loc));
 		}
 		try {
-			IGTD parser = cache.get(grammar).newInstance();
+			IGTD<IConstructor,IConstructor,ISourceLocation> parser = cache.get(grammar).newInstance();
 			return (IConstructor) parser.parse(sort.getValue(), loc.getURI(), 
 					src.getValue().toCharArray(), 
-					MY_ACTION_EXECUTOR, null, new NodeToUPTR());
+					MY_ACTION_EXECUTOR, 
+					new DefaultNodeFlattener<IConstructor, IConstructor, ISourceLocation>(), 
+					new UPTRNodeFactory());
 		}
 		catch (ParseError pe) {
 			ISourceLocation errorLoc = vf.sourceLocation(pe.getLocation(), pe.getOffset(), pe.getLength(), pe.getBeginLine() + 1, pe.getEndLine() + 1, pe.getBeginColumn(), pe.getEndColumn());
@@ -79,7 +82,7 @@ public class PGen {
 		}
 	}
 
-	private Class<IGTD> buildParser(IConstructor grammar, ISourceLocation loc) {
+	private Class<IGTD<IConstructor,IConstructor,ISourceLocation>> buildParser(IConstructor grammar, ISourceLocation loc) {
 		try {
 			IString grammarName = makeGrammarName(grammar);
 			IString classString = (IString) evaluator.call("generateObjectParser", PKG, grammarName, grammar);

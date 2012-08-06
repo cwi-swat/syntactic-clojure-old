@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
-import java.util.Arrays;
 
 import lang.clojure.syntax.ClojureParser;
 
@@ -15,24 +14,19 @@ import org.eclipse.imp.pdb.facts.ISetWriter;
 import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IString;
 import org.eclipse.imp.pdb.facts.IValueFactory;
-import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
-import org.rascalmpl.parser.gtd.exception.ParseError;
 import org.rascalmpl.parser.gtd.result.out.DefaultNodeFlattener;
 import org.rascalmpl.parser.gtd.util.ArrayList;
-import org.rascalmpl.parser.uptr.NodeToUPTR;
 import org.rascalmpl.parser.uptr.UPTRNodeFactory;
 import org.rascalmpl.values.Message;
 import org.rascalmpl.values.ValueFactoryFactory;
 import org.rascalmpl.values.uptr.TreeAdapter;
 
-import clojure.asm.Type;
-
 public class UPTRCompiler extends Compiler {
 	private static final String START_SORT = "start__File";
 
 	// have to copy, because private in Compiler.
-	private static final Type VAR_TYPE = Type.getType(Var.class);
+//	private static final Type VAR_TYPE = Type.getType(Var.class);
 	
 	private final IValueFactory vf;
 

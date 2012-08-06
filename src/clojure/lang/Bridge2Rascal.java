@@ -23,7 +23,8 @@ import org.rascalmpl.interpreter.env.ModuleEnvironment;
 import org.rascalmpl.interpreter.utils.JavaBridge;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.gtd.result.action.IActionExecutor;
-import org.rascalmpl.parser.uptr.NodeToUPTR;
+import org.rascalmpl.parser.gtd.result.out.DefaultNodeFlattener;
+import org.rascalmpl.parser.uptr.UPTRNodeFactory;
 
 public class Bridge2Rascal {
 	private Evaluator evaluator;
@@ -34,7 +35,7 @@ public class Bridge2Rascal {
 
 	public Bridge2Rascal(IValueFactory values) {
 		PKG = values.string("lang.synclj.object.parsers");
-		cache = new HashMap<IConstructor, Class<IGTD>>();
+		cache = new HashMap<IConstructor, Class<IGTD<IConstructor,IConstructor,ISourceLocation>>>();
 		vf = values;
 		GlobalEnvironment heap = new GlobalEnvironment();
 		ModuleEnvironment scope = new ModuleEnvironment(
@@ -81,7 +82,8 @@ public class Bridge2Rascal {
 			IGTD<IConstructor,IConstructor,ISourceLocation> parser = cache.get(grammar).newInstance();
 			return (IConstructor) parser.parse(sort, loc.getURI(),
 					src.toCharArray(), MY_ACTION_EXECUTOR,
-					new NodeToUPTR(), null);
+					new DefaultNodeFlattener<IConstructor, IConstructor, ISourceLocation>(),
+					new UPTRNodeFactory());
 		} catch (InstantiationException e) {
 			throw new ImplementationError("parser generator:" + e.getMessage(), e);
 		} catch (IllegalAccessException e) {
@@ -89,7 +91,7 @@ public class Bridge2Rascal {
 		}
 	}
 
-	private Class<IGTD> buildParser(IConstructor grammar, ISourceLocation loc) {
+	private Class<IGTD<IConstructor,IConstructor,ISourceLocation>> buildParser(IConstructor grammar, ISourceLocation loc) {
 		try {
 			IString grammarName = makeGrammarName(grammar);
 			IString classString = (IString) evaluator.call(
@@ -110,90 +112,107 @@ public class Bridge2Rascal {
 		return vf.string("grammar_" + Math.abs(grammar.hashCode()));
 	}
 
-	private static final IActionExecutor MY_ACTION_EXECUTOR = new IActionExecutor() {
+	private static final IActionExecutor<IConstructor> MY_ACTION_EXECUTOR = new IActionExecutor<IConstructor>() {
 
 		@Override
-		public boolean isImpure(IConstructor rhs) {
-			return false;
+		public Object createRootEnvironment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void completed(Object environment, boolean filtered) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Object enteringProduction(Object production, Object parent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object enteringListProduction(Object production, Object parent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object enteringNode(Object production, int index,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object enteringListNode(Object production, int index,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void exitedProduction(Object production, boolean filtered,
+				Object environment) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitedListProduction(Object production, boolean filtered,
+				Object environment) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
 		public IConstructor filterProduction(IConstructor tree,
 				Object environment) {
-			return tree;
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
 		public IConstructor filterListProduction(IConstructor tree,
 				Object environment) {
-			return tree;
-		}
-
-		@Override
-		public IConstructor filterListCycle(IConstructor cycle,
-				Object environment) {
-			return cycle;
-		}
-
-		@Override
-		public IConstructor filterListAmbiguity(IConstructor ambCluster,
-				Object environment) {
-			return ambCluster;
-		}
-
-		@Override
-		public IConstructor filterCycle(IConstructor cycle, Object environment) {
-			return cycle;
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
 		public IConstructor filterAmbiguity(IConstructor ambCluster,
 				Object environment) {
-			return ambCluster;
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
-		public void exitedProduction(IConstructor production, boolean filtered,
+		public IConstructor filterListAmbiguity(IConstructor ambCluster,
 				Object environment) {
-
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
-		public void exitedListProduction(IConstructor production,
-				boolean filtered, Object environment) {
+		public IConstructor filterCycle(IConstructor cycle, Object environment) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
-		public Object enteringProduction(IConstructor production, Object parent) {
-			return parent;
-		}
-
-		@Override
-		public Object enteringNode(IConstructor production, int index,
+		public IConstructor filterListCycle(IConstructor cycle,
 				Object environment) {
-			return environment;
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
-		public Object enteringListProduction(IConstructor production,
-				Object parent) {
-			return parent;
+		public boolean isImpure(Object rhs) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
-		@Override
-		public Object enteringListNode(IConstructor production, int index,
-				Object environment) {
-			return environment;
-		}
-
-		@Override
-		public Object createRootEnvironment() {
-			return new Object();
-		}
-
-		@Override
-		public void completed(Object environment, boolean filtered) {
-		}
 	};
 
 	private void debugOutput(String classString, String file) {
