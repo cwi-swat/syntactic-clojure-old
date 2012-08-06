@@ -62,8 +62,9 @@ public class PGen {
 		}
 		try {
 			IGTD parser = cache.get(grammar).newInstance();
-			return (IConstructor) parser.parse(sort.getValue(), loc.getURI(), src.getValue().toCharArray(), 
-					MY_ACTION_EXECUTOR, new NodeToUPTR(), null);
+			return (IConstructor) parser.parse(sort.getValue(), loc.getURI(), 
+					src.getValue().toCharArray(), 
+					MY_ACTION_EXECUTOR, null, new NodeToUPTR());
 		}
 		catch (ParseError pe) {
 			ISourceLocation errorLoc = vf.sourceLocation(pe.getLocation(), pe.getOffset(), pe.getLength(), pe.getBeginLine() + 1, pe.getEndLine() + 1, pe.getBeginColumn(), pe.getEndColumn());
@@ -97,87 +98,108 @@ public class PGen {
 	}
 
 
-	private static final IActionExecutor MY_ACTION_EXECUTOR = new IActionExecutor() {
+	private static final IActionExecutor<IConstructor> MY_ACTION_EXECUTOR = new IActionExecutor<IConstructor>() {
+
+		@Override
+		public Object createRootEnvironment() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void completed(Object environment, boolean filtered) {
+			// TODO Auto-generated method stub
 			
-			@Override
-			public boolean isImpure(IConstructor rhs) {
-				return false;
-			}
+		}
+
+		@Override
+		public Object enteringProduction(Object production, Object parent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object enteringListProduction(Object production, Object parent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object enteringNode(Object production, int index,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Object enteringListNode(Object production, int index,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void exitedProduction(Object production, boolean filtered,
+				Object environment) {
+			// TODO Auto-generated method stub
 			
-			@Override
-			public IConstructor filterProduction(IConstructor tree, Object environment) {
-				return tree;
-			}
+		}
+
+		@Override
+		public void exitedListProduction(Object production, boolean filtered,
+				Object environment) {
+			// TODO Auto-generated method stub
 			
-			@Override
-			public IConstructor filterListProduction(IConstructor tree,
-					Object environment) {
-				return tree;
-			}
+		}
+
+		@Override
+		public IConstructor filterProduction(IConstructor tree,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IConstructor filterListProduction(IConstructor tree,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IConstructor filterAmbiguity(IConstructor ambCluster,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IConstructor filterListAmbiguity(IConstructor ambCluster,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IConstructor filterCycle(IConstructor cycle, Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IConstructor filterListCycle(IConstructor cycle,
+				Object environment) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isImpure(Object rhs) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 			
-			@Override
-			public IConstructor filterListCycle(IConstructor cycle, Object environment) {
-				return cycle;
-			}
 			
-			@Override
-			public IConstructor filterListAmbiguity(IConstructor ambCluster,
-					Object environment) {
-				return ambCluster;
-			}
-			
-			@Override
-			public IConstructor filterCycle(IConstructor cycle, Object environment) {
-				return cycle;
-			}
-			
-			@Override
-			public IConstructor filterAmbiguity(IConstructor ambCluster,
-					Object environment) {
-				return ambCluster;
-			}
-			
-			@Override
-			public void exitedProduction(IConstructor production, boolean filtered,
-					Object environment) {
-				
-			}
-			
-			@Override
-			public void exitedListProduction(IConstructor production, boolean filtered,
-					Object environment) {
-			}
-			
-			@Override
-			public Object enteringProduction(IConstructor production, Object parent) {
-				return parent;
-			}
-			
-			@Override
-			public Object enteringNode(IConstructor production, int index,
-					Object environment) {
-				return environment;
-			}
-			
-			@Override
-			public Object enteringListProduction(IConstructor production, Object parent) {
-				return parent;
-			}
-			
-			@Override
-			public Object enteringListNode(IConstructor production, int index,
-					Object environment) {
-				return environment;
-			}
-			
-			@Override
-			public Object createRootEnvironment() {
-				return new Object();
-			}
-			
-			@Override
-			public void completed(Object environment, boolean filtered) {
-			}
 		};
 	
 		

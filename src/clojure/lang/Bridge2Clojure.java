@@ -10,9 +10,6 @@ import org.eclipse.imp.pdb.facts.IValueFactory;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.values.ValueFactoryFactory;
 
-import clojure.lang.RT;
-import clojure.lang.UPTRCompiler;
-
 public class Bridge2Clojure {
 
 	private final IValueFactory vf;

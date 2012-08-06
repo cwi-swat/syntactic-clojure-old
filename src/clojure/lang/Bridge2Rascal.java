@@ -30,7 +30,7 @@ public class Bridge2Rascal {
 	private JavaBridge bridge;
 	private final IString PKG;
 	private final IValueFactory vf;
-	private final Map<IConstructor, Class<IGTD>> cache;
+	private final Map<IConstructor, Class<IGTD<IConstructor,IConstructor,ISourceLocation>>> cache;
 
 	public Bridge2Rascal(IValueFactory values) {
 		PKG = values.string("lang.synclj.object.parsers");
@@ -78,7 +78,7 @@ public class Bridge2Rascal {
 			cache.put(grammar, buildParser(grammar, loc));
 		}
 		try {
-			IGTD parser = cache.get(grammar).newInstance();
+			IGTD<IConstructor,IConstructor,ISourceLocation> parser = cache.get(grammar).newInstance();
 			return (IConstructor) parser.parse(sort, loc.getURI(),
 					src.toCharArray(), MY_ACTION_EXECUTOR,
 					new NodeToUPTR(), null);

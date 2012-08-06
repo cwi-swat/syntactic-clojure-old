@@ -18,8 +18,10 @@ import org.eclipse.imp.pdb.facts.IValueFactory;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.parser.gtd.IGTD;
 import org.rascalmpl.parser.gtd.exception.ParseError;
+import org.rascalmpl.parser.gtd.result.out.DefaultNodeFlattener;
 import org.rascalmpl.parser.gtd.util.ArrayList;
 import org.rascalmpl.parser.uptr.NodeToUPTR;
+import org.rascalmpl.parser.uptr.UPTRNodeFactory;
 import org.rascalmpl.values.Message;
 import org.rascalmpl.values.ValueFactoryFactory;
 import org.rascalmpl.values.uptr.TreeAdapter;
@@ -44,9 +46,9 @@ public class UPTRCompiler extends Compiler {
 	// TODO: this class needs some refactoring... Too much duplication.
 	
 	public static IConstructor loadForRascal(IValueFactory vf, IString src, ISourceLocation loc) {
-		IGTD gtd = new ClojureParser();
+		IGTD<IConstructor,IConstructor,ISourceLocation> gtd = new ClojureParser();
 		IConstructor file = (IConstructor) gtd.parse(START_SORT, loc.getURI(), 
-				src.getValue().toCharArray(), new NodeToUPTR());
+				src.getValue().toCharArray(), new DefaultNodeFlattener<IConstructor, IConstructor, ISourceLocation>(), new UPTRNodeFactory());
 		
 		String path = loc.getURI().getPath();
 		IConstructor[] fileRef = new IConstructor[] {file};
@@ -73,8 +75,9 @@ public class UPTRCompiler extends Compiler {
 
 	private Object loadFromChars(char[] input, String sourcePath,
 			String sourceName) {
-		IGTD gtd = new ClojureParser();
-		IConstructor file = (IConstructor) gtd.parse(START_SORT, URI.create(sourcePath), input, new NodeToUPTR());
+		IGTD<IConstructor,IConstructor,ISourceLocation> gtd = new ClojureParser();
+		IConstructor file = (IConstructor) gtd.parse(START_SORT, URI.create(sourcePath), input, 
+				  new DefaultNodeFlattener<IConstructor, IConstructor, ISourceLocation>(), new UPTRNodeFactory());
 		return loadPT(new IConstructor[] {file}, sourcePath, sourceName);
 //		catch (ParseError e) {
 //			throw RuntimeExceptionFactory.parseError(
