@@ -5,6 +5,7 @@ import java.io.StringReader;
 
 import org.eclipse.imp.pdb.facts.type.TypeFactory;
 import org.eclipse.imp.pdb.facts.IConstructor;
+import org.eclipse.imp.pdb.facts.ISourceLocation;
 import org.eclipse.imp.pdb.facts.IValue;
 import org.eclipse.imp.pdb.facts.IValueFactory;
 import org.eclipse.imp.pdb.facts.exceptions.FactTypeUseException;
@@ -21,6 +22,7 @@ import org.rascalmpl.parser.gtd.util.IntegerMap;
 import org.rascalmpl.values.ValueFactoryFactory;
 import org.rascalmpl.values.uptr.Factory;
 
+@SuppressWarnings("all")
 public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.RascalRascal {
   protected final static IValueFactory VF = ValueFactoryFactory.getValueFactory();
   
@@ -203,20 +205,20 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
 	
 	
   protected static class layouts_Standard {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__layouts_Standard__conditional__iter_star__WhitespaceOrComment__not_follow__char_class___range__9_10_range__12_13_range__32_32_range__44_44_not_follow__lit___59_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__layouts_Standard__conditional__iter_star__WhitespaceOrComment__not_follow__char_class___range__9_10_range__12_13_range__32_32_range__44_44_not_follow__lit___59_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new ListStackNode(6, 0, regular__iter_star__WhitespaceOrComment, new NonTerminalStackNode(8, 0, "WhitespaceOrComment", null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{9,10},{12,13},{32,32},{44,44}}), new StringFollowRestriction(new int[] {59})});
+      tmp[0] = new ListStackNode<IConstructor>(6, 0, regular__iter_star__WhitespaceOrComment, new NonTerminalStackNode<IConstructor>(8, 0, "WhitespaceOrComment", null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{9,10},{12,13},{32,32},{44,44}}), new StringFollowRestriction(new int[] {59})});
       builder.addAlternative(ClojureParser.prod__layouts_Standard__conditional__iter_star__WhitespaceOrComment__not_follow__char_class___range__9_10_range__12_13_range__32_32_range__44_44_not_follow__lit___59_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__layouts_Standard__conditional__iter_star__WhitespaceOrComment__not_follow__char_class___range__9_10_range__12_13_range__32_32_range__44_44_not_follow__lit___59_(builder);
@@ -225,23 +227,23 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Ratio {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Ratio__opt__char_class___range__43_43_range__45_45_iter__char_class___range__48_57_char_class___range__47_47_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[4];
+    protected static final void _init_prod__Ratio__opt__char_class___range__43_43_range__45_45_iter__char_class___range__48_57_char_class___range__47_47_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[4];
       
-      tmp[3] = new ListStackNode(20, 3, regular__iter__char_class___range__48_57, new CharStackNode(22, 0, new int[][]{{48,57}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
-      tmp[2] = new CharStackNode(18, 2, new int[][]{{47,47}}, null, null);
-      tmp[1] = new ListStackNode(14, 1, regular__iter__char_class___range__48_57, new CharStackNode(16, 0, new int[][]{{48,57}}, null, null), true, null, null);
-      tmp[0] = new OptionalStackNode(10, 0, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode(12, 0, new int[][]{{43,43},{45,45}}, null, null), null, null);
+      tmp[3] = new ListStackNode<IConstructor>(20, 3, regular__iter__char_class___range__48_57, new CharStackNode<IConstructor>(22, 0, new int[][]{{48,57}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
+      tmp[2] = new CharStackNode<IConstructor>(18, 2, new int[][]{{47,47}}, null, null);
+      tmp[1] = new ListStackNode<IConstructor>(14, 1, regular__iter__char_class___range__48_57, new CharStackNode<IConstructor>(16, 0, new int[][]{{48,57}}, null, null), true, null, null);
+      tmp[0] = new OptionalStackNode<IConstructor>(10, 0, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode<IConstructor>(12, 0, new int[][]{{43,43},{45,45}}, null, null), null, null);
       builder.addAlternative(ClojureParser.prod__Ratio__opt__char_class___range__43_43_range__45_45_iter__char_class___range__48_57_char_class___range__47_47_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Ratio__opt__char_class___range__43_43_range__45_45_iter__char_class___range__48_57_char_class___range__47_47_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_(builder);
@@ -250,32 +252,32 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Number {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__integer_Number__Integer_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__integer_Number__Integer_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(102, 0, "Integer", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(102, 0, "Integer", null, null);
       builder.addAlternative(ClojureParser.prod__integer_Number__Integer_, tmp);
 	}
-    protected static final void _init_prod__ratio_Number__Ratio_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__ratio_Number__Ratio_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(104, 0, "Ratio", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(104, 0, "Ratio", null, null);
       builder.addAlternative(ClojureParser.prod__ratio_Number__Ratio_, tmp);
 	}
-    protected static final void _init_prod__float_Number__Float_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__float_Number__Float_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(106, 0, "Float", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(106, 0, "Float", null, null);
       builder.addAlternative(ClojureParser.prod__float_Number__Float_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__integer_Number__Integer_(builder);
@@ -288,50 +290,50 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Stem {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__46_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__46_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new SequenceStackNode(40, 0, regular__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__46_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39, new AbstractStackNode[]{new CharStackNode(42, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode(44, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode(46, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new CharStackNode(48, 2, new int[][]{{33,33},{35,36},{38,38},{42,43},{46,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), new ListStackNode(50, 3, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode(52, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new ListStackNode(54, 4, regular__iter__char_class___range__39_39, new CharStackNode(56, 0, new int[][]{{39,39}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{39,39}})})}, null, null);
+      tmp[0] = new SequenceStackNode<IConstructor>(40, 0, regular__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__46_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(42, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode<IConstructor>(44, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode<IConstructor>(46, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new CharStackNode<IConstructor>(48, 2, new int[][]{{33,33},{35,36},{38,38},{42,43},{46,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), new ListStackNode<IConstructor>(50, 3, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode<IConstructor>(52, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new ListStackNode<IConstructor>(54, 4, regular__iter__char_class___range__39_39, new CharStackNode<IConstructor>(56, 0, new int[][]{{39,39}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{39,39}})})}, null, null);
       builder.addAlternative(ClojureParser.prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__46_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_, tmp);
 	}
-    protected static final void _init_prod__Stem__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Stem__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new SequenceStackNode(58, 0, regular__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39, new AbstractStackNode[]{new CharStackNode(60, 0, new int[][]{{33,33},{38,38},{42,43},{46,46},{60,63},{65,90},{95,95},{97,122},{124,124}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode(62, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode(64, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new ListStackNode(66, 2, regular__iter__char_class___range__39_39, new CharStackNode(68, 0, new int[][]{{39,39}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{39,39}})})}, null, null);
+      tmp[0] = new SequenceStackNode<IConstructor>(58, 0, regular__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(60, 0, new int[][]{{33,33},{38,38},{42,43},{46,46},{60,63},{65,90},{95,95},{97,122},{124,124}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode<IConstructor>(62, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode<IConstructor>(64, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new ListStackNode<IConstructor>(66, 2, regular__iter__char_class___range__39_39, new CharStackNode<IConstructor>(68, 0, new int[][]{{39,39}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{39,39}})})}, null, null);
       builder.addAlternative(ClojureParser.prod__Stem__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_, tmp);
 	}
-    protected static final void _init_prod__Stem__conditional__char_class___range__45_45__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Stem__conditional__char_class___range__45_45__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new CharStackNode(70, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})});
+      tmp[0] = new CharStackNode<IConstructor>(70, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})});
       builder.addAlternative(ClojureParser.prod__Stem__conditional__char_class___range__45_45__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_, tmp);
 	}
-    protected static final void _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new SequenceStackNode(72, 0, regular__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39, new AbstractStackNode[]{new CharStackNode(74, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode(76, 1, regular__iter__char_class___range__39_39, new CharStackNode(78, 0, new int[][]{{39,39}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{39,39}})})}, null, null);
+      tmp[0] = new SequenceStackNode<IConstructor>(72, 0, regular__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(74, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode<IConstructor>(76, 1, regular__iter__char_class___range__39_39, new CharStackNode<IConstructor>(78, 0, new int[][]{{39,39}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{39,39}})})}, null, null);
       builder.addAlternative(ClojureParser.prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_, tmp);
 	}
-    protected static final void _init_prod__Stem__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Stem__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new SequenceStackNode(80, 0, regular__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new AbstractStackNode[]{new CharStackNode(82, 0, new int[][]{{33,33},{38,38},{42,43},{46,46},{60,63},{65,90},{95,95},{97,122},{124,124}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode(84, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode(86, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})})}, null, null);
+      tmp[0] = new SequenceStackNode<IConstructor>(80, 0, regular__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(82, 0, new int[][]{{33,33},{38,38},{42,43},{46,46},{60,63},{65,90},{95,95},{97,122},{124,124}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode<IConstructor>(84, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode<IConstructor>(86, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})})}, null, null);
       builder.addAlternative(ClojureParser.prod__Stem__seq___conditional__char_class___range__33_33_range__38_38_range__42_43_range__46_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_, tmp);
 	}
-    protected static final void _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new SequenceStackNode(88, 0, regular__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new AbstractStackNode[]{new CharStackNode(90, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode(92, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode(94, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new CharStackNode(96, 2, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), new ListStackNode(98, 3, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode(100, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})})}, null, null);
+      tmp[0] = new SequenceStackNode<IConstructor>(88, 0, regular__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(90, 0, new int[][]{{45,45}}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, null), new ListStackNode<IConstructor>(92, 1, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode<IConstructor>(94, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, null), new CharStackNode<IConstructor>(96, 2, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), new ListStackNode<IConstructor>(98, 3, regular__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124, new CharStackNode<IConstructor>(100, 0, new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})})}, null, null);
       builder.addAlternative(ClojureParser.prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Stem__seq___conditional__char_class___range__45_45__not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__46_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_iter_star__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_conditional__iter__char_class___range__39_39__not_follow__char_class___range__39_39_(builder);
@@ -350,51 +352,51 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class IntValue {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__IntValue__char_class___range__49_57_opt__char_class___range__48_57_char_class___range__82_82_range__114_114_conditional__iter__char_class___range__48_57_range__65_90_range__97_122__not_follow__char_class___range__48_57_range__65_90_range__97_122_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[4];
+    protected static final void _init_prod__IntValue__char_class___range__49_57_opt__char_class___range__48_57_char_class___range__82_82_range__114_114_conditional__iter__char_class___range__48_57_range__65_90_range__97_122__not_follow__char_class___range__48_57_range__65_90_range__97_122_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[4];
       
-      tmp[3] = new ListStackNode(126, 3, regular__iter__char_class___range__48_57_range__65_90_range__97_122, new CharStackNode(128, 0, new int[][]{{48,57},{65,90},{97,122}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57},{65,90},{97,122}})});
-      tmp[2] = new CharStackNode(124, 2, new int[][]{{82,82},{114,114}}, null, null);
-      tmp[1] = new OptionalStackNode(120, 1, regular__opt__char_class___range__48_57, new CharStackNode(122, 0, new int[][]{{48,57}}, null, null), null, null);
-      tmp[0] = new CharStackNode(118, 0, new int[][]{{49,57}}, null, null);
+      tmp[3] = new ListStackNode<IConstructor>(126, 3, regular__iter__char_class___range__48_57_range__65_90_range__97_122, new CharStackNode<IConstructor>(128, 0, new int[][]{{48,57},{65,90},{97,122}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57},{65,90},{97,122}})});
+      tmp[2] = new CharStackNode<IConstructor>(124, 2, new int[][]{{82,82},{114,114}}, null, null);
+      tmp[1] = new OptionalStackNode<IConstructor>(120, 1, regular__opt__char_class___range__48_57, new CharStackNode<IConstructor>(122, 0, new int[][]{{48,57}}, null, null), null, null);
+      tmp[0] = new CharStackNode<IConstructor>(118, 0, new int[][]{{49,57}}, null, null);
       builder.addAlternative(ClojureParser.prod__IntValue__char_class___range__49_57_opt__char_class___range__48_57_char_class___range__82_82_range__114_114_conditional__iter__char_class___range__48_57_range__65_90_range__97_122__not_follow__char_class___range__48_57_range__65_90_range__97_122_, tmp);
 	}
-    protected static final void _init_prod__IntValue__conditional__char_class___range__48_48__not_follow__char_class___range__48_55_range__88_88_range__120_120_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__IntValue__conditional__char_class___range__48_48__not_follow__char_class___range__48_55_range__88_88_range__120_120_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new CharStackNode(130, 0, new int[][]{{48,48}}, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,55},{88,88},{120,120}})});
+      tmp[0] = new CharStackNode<IConstructor>(130, 0, new int[][]{{48,48}}, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,55},{88,88},{120,120}})});
       builder.addAlternative(ClojureParser.prod__IntValue__conditional__char_class___range__48_48__not_follow__char_class___range__48_55_range__88_88_range__120_120_, tmp);
 	}
-    protected static final void _init_prod__IntValue__char_class___range__48_48_conditional__iter__char_class___range__48_55__not_follow__char_class___range__48_55_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__IntValue__char_class___range__48_48_conditional__iter__char_class___range__48_55__not_follow__char_class___range__48_55_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new ListStackNode(134, 1, regular__iter__char_class___range__48_55, new CharStackNode(136, 0, new int[][]{{48,55}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,55}})});
-      tmp[0] = new CharStackNode(132, 0, new int[][]{{48,48}}, null, null);
+      tmp[1] = new ListStackNode<IConstructor>(134, 1, regular__iter__char_class___range__48_55, new CharStackNode<IConstructor>(136, 0, new int[][]{{48,55}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,55}})});
+      tmp[0] = new CharStackNode<IConstructor>(132, 0, new int[][]{{48,48}}, null, null);
       builder.addAlternative(ClojureParser.prod__IntValue__char_class___range__48_48_conditional__iter__char_class___range__48_55__not_follow__char_class___range__48_55_, tmp);
 	}
-    protected static final void _init_prod__IntValue__char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__IntValue__char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new ListStackNode(140, 1, regular__iter_star__char_class___range__48_57, new CharStackNode(142, 0, new int[][]{{48,57}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
-      tmp[0] = new CharStackNode(138, 0, new int[][]{{49,57}}, null, null);
+      tmp[1] = new ListStackNode<IConstructor>(140, 1, regular__iter_star__char_class___range__48_57, new CharStackNode<IConstructor>(142, 0, new int[][]{{48,57}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
+      tmp[0] = new CharStackNode<IConstructor>(138, 0, new int[][]{{49,57}}, null, null);
       builder.addAlternative(ClojureParser.prod__IntValue__char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_, tmp);
 	}
-    protected static final void _init_prod__IntValue__char_class___range__48_48_char_class___range__88_88_range__120_120_conditional__iter__char_class___range__48_57_range__65_70_range__97_102__not_follow__char_class___range__48_57_range__65_70_range__97_102_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__IntValue__char_class___range__48_48_char_class___range__88_88_range__120_120_conditional__iter__char_class___range__48_57_range__65_70_range__97_102__not_follow__char_class___range__48_57_range__65_70_range__97_102_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new ListStackNode(148, 2, regular__iter__char_class___range__48_57_range__65_70_range__97_102, new CharStackNode(150, 0, new int[][]{{48,57},{65,70},{97,102}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57},{65,70},{97,102}})});
-      tmp[1] = new CharStackNode(146, 1, new int[][]{{88,88},{120,120}}, null, null);
-      tmp[0] = new CharStackNode(144, 0, new int[][]{{48,48}}, null, null);
+      tmp[2] = new ListStackNode<IConstructor>(148, 2, regular__iter__char_class___range__48_57_range__65_70_range__97_102, new CharStackNode<IConstructor>(150, 0, new int[][]{{48,57},{65,70},{97,102}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57},{65,70},{97,102}})});
+      tmp[1] = new CharStackNode<IConstructor>(146, 1, new int[][]{{88,88},{120,120}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(144, 0, new int[][]{{48,48}}, null, null);
       builder.addAlternative(ClojureParser.prod__IntValue__char_class___range__48_48_char_class___range__88_88_range__120_120_conditional__iter__char_class___range__48_57_range__65_70_range__97_102__not_follow__char_class___range__48_57_range__65_70_range__97_102_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__IntValue__char_class___range__49_57_opt__char_class___range__48_57_char_class___range__82_82_range__114_114_conditional__iter__char_class___range__48_57_range__65_90_range__97_122__not_follow__char_class___range__48_57_range__65_90_range__97_122_(builder);
@@ -411,22 +413,22 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class start__File {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__start__File__layouts_Standard_top_File_layouts_Standard_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__start__File__layouts_Standard_top_File_layouts_Standard_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(116, 2, "layouts_Standard", null, null);
-      tmp[1] = new NonTerminalStackNode(114, 1, "File", null, null);
-      tmp[0] = new NonTerminalStackNode(112, 0, "layouts_Standard", null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(116, 2, "layouts_Standard", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(114, 1, "File", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(112, 0, "layouts_Standard", null, null);
       builder.addAlternative(ClojureParser.prod__start__File__layouts_Standard_top_File_layouts_Standard_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__start__File__layouts_Standard_top_File_layouts_Standard_(builder);
@@ -435,63 +437,63 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Char {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Char__char_class___range__92_92_lit_backspace_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_lit_backspace_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new LiteralStackNode(174, 1, prod__lit_backspace__char_class___range__98_98_char_class___range__97_97_char_class___range__99_99_char_class___range__107_107_char_class___range__115_115_char_class___range__112_112_char_class___range__97_97_char_class___range__99_99_char_class___range__101_101_, new int[] {98,97,99,107,115,112,97,99,101}, null, null);
-      tmp[0] = new CharStackNode(172, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(174, 1, prod__lit_backspace__char_class___range__98_98_char_class___range__97_97_char_class___range__99_99_char_class___range__107_107_char_class___range__115_115_char_class___range__112_112_char_class___range__97_97_char_class___range__99_99_char_class___range__101_101_, new int[] {98,97,99,107,115,112,97,99,101}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(172, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_lit_backspace_, tmp);
 	}
-    protected static final void _init_prod__Char__char_class___range__92_92_lit_formfeed_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_lit_formfeed_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new LiteralStackNode(178, 1, prod__lit_formfeed__char_class___range__102_102_char_class___range__111_111_char_class___range__114_114_char_class___range__109_109_char_class___range__102_102_char_class___range__101_101_char_class___range__101_101_char_class___range__100_100_, new int[] {102,111,114,109,102,101,101,100}, null, null);
-      tmp[0] = new CharStackNode(176, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(178, 1, prod__lit_formfeed__char_class___range__102_102_char_class___range__111_111_char_class___range__114_114_char_class___range__109_109_char_class___range__102_102_char_class___range__101_101_char_class___range__101_101_char_class___range__100_100_, new int[] {102,111,114,109,102,101,101,100}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(176, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_lit_formfeed_, tmp);
 	}
-    protected static final void _init_prod__Char__char_class___range__92_92_lit_tab_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_lit_tab_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new LiteralStackNode(182, 1, prod__lit_tab__char_class___range__116_116_char_class___range__97_97_char_class___range__98_98_, new int[] {116,97,98}, null, null);
-      tmp[0] = new CharStackNode(180, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(182, 1, prod__lit_tab__char_class___range__116_116_char_class___range__97_97_char_class___range__98_98_, new int[] {116,97,98}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(180, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_lit_tab_, tmp);
 	}
-    protected static final void _init_prod__Char__char_class___range__92_92_lit_newline_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_lit_newline_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new LiteralStackNode(186, 1, prod__lit_newline__char_class___range__110_110_char_class___range__101_101_char_class___range__119_119_char_class___range__108_108_char_class___range__105_105_char_class___range__110_110_char_class___range__101_101_, new int[] {110,101,119,108,105,110,101}, null, null);
-      tmp[0] = new CharStackNode(184, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(186, 1, prod__lit_newline__char_class___range__110_110_char_class___range__101_101_char_class___range__119_119_char_class___range__108_108_char_class___range__105_105_char_class___range__110_110_char_class___range__101_101_, new int[] {110,101,119,108,105,110,101}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(184, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_lit_newline_, tmp);
 	}
-    protected static final void _init_prod__Char__char_class___range__92_92_char_class___range__0_7_range__11_11_range__14_31_range__33_16777215_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_char_class___range__0_7_range__11_11_range__14_31_range__33_16777215_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new CharStackNode(190, 1, new int[][]{{0,7},{11,11},{14,31},{33,16777215}}, null, null);
-      tmp[0] = new CharStackNode(188, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new CharStackNode<IConstructor>(190, 1, new int[][]{{0,7},{11,11},{14,31},{33,16777215}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(188, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_char_class___range__0_7_range__11_11_range__14_31_range__33_16777215_, tmp);
 	}
-    protected static final void _init_prod__Char__char_class___range__92_92_lit_space_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_lit_space_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new LiteralStackNode(194, 1, prod__lit_space__char_class___range__115_115_char_class___range__112_112_char_class___range__97_97_char_class___range__99_99_char_class___range__101_101_, new int[] {115,112,97,99,101}, null, null);
-      tmp[0] = new CharStackNode(192, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(194, 1, prod__lit_space__char_class___range__115_115_char_class___range__112_112_char_class___range__97_97_char_class___range__99_99_char_class___range__101_101_, new int[] {115,112,97,99,101}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(192, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_lit_space_, tmp);
 	}
-    protected static final void _init_prod__Char__char_class___range__92_92_lit_return_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Char__char_class___range__92_92_lit_return_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new LiteralStackNode(198, 1, prod__lit_return__char_class___range__114_114_char_class___range__101_101_char_class___range__116_116_char_class___range__117_117_char_class___range__114_114_char_class___range__110_110_, new int[] {114,101,116,117,114,110}, null, null);
-      tmp[0] = new CharStackNode(196, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(198, 1, prod__lit_return__char_class___range__114_114_char_class___range__101_101_char_class___range__116_116_char_class___range__117_117_char_class___range__114_114_char_class___range__110_110_, new int[] {114,101,116,117,114,110}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(196, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__Char__char_class___range__92_92_lit_return_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Char__char_class___range__92_92_lit_backspace_(builder);
@@ -512,20 +514,20 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class File {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__File__iter_star_seps__Form__layouts_Standard_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__File__iter_star_seps__Form__layouts_Standard_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new SeparatedListStackNode(200, 0, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode(202, 0, "Form", null, null), new AbstractStackNode[]{new NonTerminalStackNode(204, 1, "layouts_Standard", null, null)}, false, null, null);
+      tmp[0] = new SeparatedListStackNode<IConstructor>(200, 0, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode<IConstructor>(202, 0, "Form", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new NonTerminalStackNode<IConstructor>(204, 1, "layouts_Standard", null, null)}, false, null, null);
       builder.addAlternative(ClojureParser.prod__File__iter_star_seps__Form__layouts_Standard_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__File__iter_star_seps__Form__layouts_Standard_(builder);
@@ -534,21 +536,21 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Ident {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Ident__opt__lit___58_conditional__iter_seps__Stem__lit___58__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Ident__opt__lit___58_conditional__iter_seps__Stem__lit___58__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new SeparatedListStackNode(294, 1, regular__iter_seps__Stem__lit___58, new NonTerminalStackNode(296, 0, "Stem", null, null), new AbstractStackNode[]{new LiteralStackNode(298, 1, prod__lit___58__char_class___range__58_58_, new int[] {58}, null, null)}, true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})});
-      tmp[0] = new OptionalStackNode(290, 0, regular__opt__lit___58, new LiteralStackNode(292, 0, prod__lit___58__char_class___range__58_58_, new int[] {58}, null, null), null, null);
+      tmp[1] = new SeparatedListStackNode<IConstructor>(294, 1, regular__iter_seps__Stem__lit___58, new NonTerminalStackNode<IConstructor>(296, 0, "Stem", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new LiteralStackNode<IConstructor>(298, 1, prod__lit___58__char_class___range__58_58_, new int[] {58}, null, null)}, true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{35,36},{38,39},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})});
+      tmp[0] = new OptionalStackNode<IConstructor>(290, 0, regular__opt__lit___58, new LiteralStackNode<IConstructor>(292, 0, prod__lit___58__char_class___range__58_58_, new int[] {58}, null, null), null, null);
       builder.addAlternative(ClojureParser.prod__Ident__opt__lit___58_conditional__iter_seps__Stem__lit___58__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Ident__opt__lit___58_conditional__iter_seps__Stem__lit___58__not_follow__char_class___range__33_33_range__35_36_range__38_39_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(builder);
@@ -557,20 +559,20 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class layouts_$QUOTES {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__layouts_$QUOTES__conditional__iter_star__char_class___range__9_10_range__13_13_range__32_32__not_follow__char_class___range__9_10_range__13_13_range__32_32_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__layouts_$QUOTES__conditional__iter_star__char_class___range__9_10_range__13_13_range__32_32__not_follow__char_class___range__9_10_range__13_13_range__32_32_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new ListStackNode(304, 0, regular__iter_star__char_class___range__9_10_range__13_13_range__32_32, new CharStackNode(306, 0, new int[][]{{9,10},{13,13},{32,32}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{9,10},{13,13},{32,32}})});
+      tmp[0] = new ListStackNode<IConstructor>(304, 0, regular__iter_star__char_class___range__9_10_range__13_13_range__32_32, new CharStackNode<IConstructor>(306, 0, new int[][]{{9,10},{13,13},{32,32}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{9,10},{13,13},{32,32}})});
       builder.addAlternative(ClojureParser.prod__layouts_$QUOTES__conditional__iter_star__char_class___range__9_10_range__13_13_range__32_32__not_follow__char_class___range__9_10_range__13_13_range__32_32_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__layouts_$QUOTES__conditional__iter_star__char_class___range__9_10_range__13_13_range__32_32__not_follow__char_class___range__9_10_range__13_13_range__32_32_(builder);
@@ -579,21 +581,21 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Comment {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Comment__lit___59_conditional__iter_star__char_class___range__0_9_range__11_12_range__14_16777215__end_of_line__tag__category___67_111_109_109_101_110_116(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Comment__lit___59_conditional__iter_star__char_class___range__0_9_range__11_12_range__14_16777215__end_of_line__tag__category___67_111_109_109_101_110_116(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new ListStackNode(362, 1, regular__iter_star__char_class___range__0_9_range__11_12_range__14_16777215, new CharStackNode(364, 0, new int[][]{{0,9},{11,12},{14,16777215}}, null, null), false, null, new ICompletionFilter[] {new AtEndOfLineRequirement()});
-      tmp[0] = new LiteralStackNode(360, 0, prod__lit___59__char_class___range__59_59_, new int[] {59}, null, null);
+      tmp[1] = new ListStackNode<IConstructor>(362, 1, regular__iter_star__char_class___range__0_9_range__11_12_range__14_16777215, new CharStackNode<IConstructor>(364, 0, new int[][]{{0,9},{11,12},{14,16777215}}, null, null), false, null, new ICompletionFilter[] {new AtEndOfLineRequirement()});
+      tmp[0] = new LiteralStackNode<IConstructor>(360, 0, prod__lit___59__char_class___range__59_59_, new int[] {59}, null, null);
       builder.addAlternative(ClojureParser.prod__Comment__lit___59_conditional__iter_star__char_class___range__0_9_range__11_12_range__14_16777215__end_of_line__tag__category___67_111_109_109_101_110_116, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Comment__lit___59_conditional__iter_star__char_class___range__0_9_range__11_12_range__14_16777215__end_of_line__tag__category___67_111_109_109_101_110_116(builder);
@@ -602,22 +604,22 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Float {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Float__opt__char_class___range__43_43_range__45_45_FloatValue_opt__char_class___range__77_77_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__Float__opt__char_class___range__43_43_range__45_45_FloatValue_opt__char_class___range__77_77_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new OptionalStackNode(372, 2, regular__opt__char_class___range__77_77, new CharStackNode(374, 0, new int[][]{{77,77}}, null, null), null, null);
-      tmp[1] = new NonTerminalStackNode(370, 1, "FloatValue", null, null);
-      tmp[0] = new OptionalStackNode(366, 0, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode(368, 0, new int[][]{{43,43},{45,45}}, null, null), null, null);
+      tmp[2] = new OptionalStackNode<IConstructor>(372, 2, regular__opt__char_class___range__77_77, new CharStackNode<IConstructor>(374, 0, new int[][]{{77,77}}, null, null), null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(370, 1, "FloatValue", null, null);
+      tmp[0] = new OptionalStackNode<IConstructor>(366, 0, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode<IConstructor>(368, 0, new int[][]{{43,43},{45,45}}, null, null), null, null);
       builder.addAlternative(ClojureParser.prod__Float__opt__char_class___range__43_43_range__45_45_FloatValue_opt__char_class___range__77_77_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Float__opt__char_class___range__43_43_range__45_45_FloatValue_opt__char_class___range__77_77_(builder);
@@ -626,41 +628,41 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Symbol {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Symbol__Ident_lit___47_Ident_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__Symbol__Ident_lit___47_Ident_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(398, 2, "Ident", null, null);
-      tmp[1] = new LiteralStackNode(396, 1, prod__lit___47__char_class___range__47_47_, new int[] {47}, null, null);
-      tmp[0] = new NonTerminalStackNode(394, 0, "Ident", null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(398, 2, "Ident", null, null);
+      tmp[1] = new LiteralStackNode<IConstructor>(396, 1, prod__lit___47__char_class___range__47_47_, new int[] {47}, null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(394, 0, "Ident", null, null);
       builder.addAlternative(ClojureParser.prod__Symbol__Ident_lit___47_Ident_, tmp);
 	}
-    protected static final void _init_prod__Symbol__Ident_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Symbol__Ident_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(400, 0, "Ident", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(400, 0, "Ident", null, null);
       builder.addAlternative(ClojureParser.prod__Symbol__Ident_, tmp);
 	}
-    protected static final void _init_prod__Symbol__conditional__lit___47__not_follow__char_class___range__33_33_range__38_38_range__42_43_range__45_46_range__58_58_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Symbol__conditional__lit___47__not_follow__char_class___range__33_33_range__38_38_range__42_43_range__45_46_range__58_58_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new LiteralStackNode(402, 0, prod__lit___47__char_class___range__47_47_, new int[] {47}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{38,38},{42,43},{45,46},{58,58},{60,63},{65,90},{95,95},{97,122},{124,124}})});
+      tmp[0] = new LiteralStackNode<IConstructor>(402, 0, prod__lit___47__char_class___range__47_47_, new int[] {47}, new IEnterFilter[] {new CharPrecedeRestriction(new int[][]{{33,33},{35,36},{38,38},{42,43},{45,46},{48,57},{60,63},{65,90},{95,95},{97,122},{124,124}})}, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{33,33},{38,38},{42,43},{45,46},{58,58},{60,63},{65,90},{95,95},{97,122},{124,124}})});
       builder.addAlternative(ClojureParser.prod__Symbol__conditional__lit___47__not_follow__char_class___range__33_33_range__38_38_range__42_43_range__45_46_range__58_58_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_not_precede__char_class___range__33_33_range__35_36_range__38_38_range__42_43_range__45_46_range__48_57_range__60_63_range__65_90_range__95_95_range__97_122_range__124_124_, tmp);
 	}
-    protected static final void _init_prod__Symbol__lit___58_58_Ident_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Symbol__lit___58_58_Ident_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new NonTerminalStackNode(406, 1, "Ident", null, null);
-      tmp[0] = new LiteralStackNode(404, 0, prod__lit___58_58__char_class___range__58_58_char_class___range__58_58_, new int[] {58,58}, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(406, 1, "Ident", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(404, 0, prod__lit___58_58__char_class___range__58_58_char_class___range__58_58_, new int[] {58,58}, null, null);
       builder.addAlternative(ClojureParser.prod__Symbol__lit___58_58_Ident_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Symbol__Ident_lit___47_Ident_(builder);
@@ -675,35 +677,35 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Arg {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Arg__char_class___range__37_37_char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__Arg__char_class___range__37_37_char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new ListStackNode(412, 2, regular__iter_star__char_class___range__48_57, new CharStackNode(414, 0, new int[][]{{48,57}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
-      tmp[1] = new CharStackNode(410, 1, new int[][]{{49,57}}, null, null);
-      tmp[0] = new CharStackNode(408, 0, new int[][]{{37,37}}, null, null);
+      tmp[2] = new ListStackNode<IConstructor>(412, 2, regular__iter_star__char_class___range__48_57, new CharStackNode<IConstructor>(414, 0, new int[][]{{48,57}}, null, null), false, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
+      tmp[1] = new CharStackNode<IConstructor>(410, 1, new int[][]{{49,57}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(408, 0, new int[][]{{37,37}}, null, null);
       builder.addAlternative(ClojureParser.prod__Arg__char_class___range__37_37_char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_, tmp);
 	}
-    protected static final void _init_prod__Arg__conditional__char_class___range__37_37__not_follow__char_class___range__38_38_range__49_57_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Arg__conditional__char_class___range__37_37__not_follow__char_class___range__38_38_range__49_57_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new CharStackNode(416, 0, new int[][]{{37,37}}, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{38,38},{49,57}})});
+      tmp[0] = new CharStackNode<IConstructor>(416, 0, new int[][]{{37,37}}, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{38,38},{49,57}})});
       builder.addAlternative(ClojureParser.prod__Arg__conditional__char_class___range__37_37__not_follow__char_class___range__38_38_range__49_57_, tmp);
 	}
-    protected static final void _init_prod__Arg__char_class___range__37_37_char_class___range__38_38_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__Arg__char_class___range__37_37_char_class___range__38_38_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new CharStackNode(420, 1, new int[][]{{38,38}}, null, null);
-      tmp[0] = new CharStackNode(418, 0, new int[][]{{37,37}}, null, null);
+      tmp[1] = new CharStackNode<IConstructor>(420, 1, new int[][]{{38,38}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(418, 0, new int[][]{{37,37}}, null, null);
       builder.addAlternative(ClojureParser.prod__Arg__char_class___range__37_37_char_class___range__38_38_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Arg__char_class___range__37_37_char_class___range__49_57_conditional__iter_star__char_class___range__48_57__not_follow__char_class___range__48_57_(builder);
@@ -716,26 +718,26 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class WhitespaceOrComment {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__whitespace_WhitespaceOrComment__Whitespace_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__whitespace_WhitespaceOrComment__Whitespace_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(422, 0, "Whitespace", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(422, 0, "Whitespace", null, null);
       builder.addAlternative(ClojureParser.prod__whitespace_WhitespaceOrComment__Whitespace_, tmp);
 	}
-    protected static final void _init_prod__comment_WhitespaceOrComment__Comment_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__comment_WhitespaceOrComment__Comment_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(424, 0, "Comment", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(424, 0, "Comment", null, null);
       builder.addAlternative(ClojureParser.prod__comment_WhitespaceOrComment__Comment_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__whitespace_WhitespaceOrComment__Whitespace_(builder);
@@ -746,22 +748,22 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class String {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__String__char_class___range__34_34_iter_star__StrChar_char_class___range__34_34__tag__category___83_116_114_105_110_103_76_105_116_101_114_97_108(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__String__char_class___range__34_34_iter_star__StrChar_char_class___range__34_34__tag__category___83_116_114_105_110_103_76_105_116_101_114_97_108(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new CharStackNode(444, 2, new int[][]{{34,34}}, null, null);
-      tmp[1] = new ListStackNode(440, 1, regular__iter_star__StrChar, new NonTerminalStackNode(442, 0, "StrChar", null, null), false, null, null);
-      tmp[0] = new CharStackNode(438, 0, new int[][]{{34,34}}, null, null);
+      tmp[2] = new CharStackNode<IConstructor>(444, 2, new int[][]{{34,34}}, null, null);
+      tmp[1] = new ListStackNode<IConstructor>(440, 1, regular__iter_star__StrChar, new NonTerminalStackNode<IConstructor>(442, 0, "StrChar", null, null), false, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(438, 0, new int[][]{{34,34}}, null, null);
       builder.addAlternative(ClojureParser.prod__String__char_class___range__34_34_iter_star__StrChar_char_class___range__34_34__tag__category___83_116_114_105_110_103_76_105_116_101_114_97_108, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__String__char_class___range__34_34_iter_star__StrChar_char_class___range__34_34__tag__category___83_116_114_105_110_103_76_105_116_101_114_97_108(builder);
@@ -770,166 +772,166 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Form {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__set_Form__lit___35_123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[5];
+    protected static final void _init_prod__set_Form__lit___35_123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[5];
       
-      tmp[4] = new LiteralStackNode(458, 4, prod__lit___125__char_class___range__125_125_, new int[] {125}, null, null);
-      tmp[3] = new NonTerminalStackNode(456, 3, "layouts_Standard", null, null);
-      tmp[2] = new SeparatedListStackNode(450, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode(452, 0, "Form", null, null), new AbstractStackNode[]{new NonTerminalStackNode(454, 1, "layouts_Standard", null, null)}, false, null, null);
-      tmp[1] = new NonTerminalStackNode(448, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(446, 0, prod__lit___35_123__char_class___range__35_35_char_class___range__123_123_, new int[] {35,123}, null, null);
+      tmp[4] = new LiteralStackNode<IConstructor>(458, 4, prod__lit___125__char_class___range__125_125_, new int[] {125}, null, null);
+      tmp[3] = new NonTerminalStackNode<IConstructor>(456, 3, "layouts_Standard", null, null);
+      tmp[2] = new SeparatedListStackNode<IConstructor>(450, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode<IConstructor>(452, 0, "Form", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new NonTerminalStackNode<IConstructor>(454, 1, "layouts_Standard", null, null)}, false, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(448, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(446, 0, prod__lit___35_123__char_class___range__35_35_char_class___range__123_123_, new int[] {35,123}, null, null);
       builder.addAlternative(ClojureParser.prod__set_Form__lit___35_123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_, tmp);
 	}
-    protected static final void _init_prod__deref_Form__lit___64_layouts_Standard_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__deref_Form__lit___64_layouts_Standard_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(464, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(462, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(460, 0, prod__lit___64__char_class___range__64_64_, new int[] {64}, null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(464, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(462, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(460, 0, prod__lit___64__char_class___range__64_64_, new int[] {64}, null, null);
       builder.addAlternative(ClojureParser.prod__deref_Form__lit___64_layouts_Standard_Form_, tmp);
 	}
-    protected static final void _init_prod__fn_Form__lit___35_40_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___41_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[5];
+    protected static final void _init_prod__fn_Form__lit___35_40_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___41_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[5];
       
-      tmp[4] = new LiteralStackNode(478, 4, prod__lit___41__char_class___range__41_41_, new int[] {41}, null, null);
-      tmp[3] = new NonTerminalStackNode(476, 3, "layouts_Standard", null, null);
-      tmp[2] = new SeparatedListStackNode(470, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode(472, 0, "Form", null, null), new AbstractStackNode[]{new NonTerminalStackNode(474, 1, "layouts_Standard", null, null)}, false, null, null);
-      tmp[1] = new NonTerminalStackNode(468, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(466, 0, prod__lit___35_40__char_class___range__35_35_char_class___range__40_40_, new int[] {35,40}, null, null);
+      tmp[4] = new LiteralStackNode<IConstructor>(478, 4, prod__lit___41__char_class___range__41_41_, new int[] {41}, null, null);
+      tmp[3] = new NonTerminalStackNode<IConstructor>(476, 3, "layouts_Standard", null, null);
+      tmp[2] = new SeparatedListStackNode<IConstructor>(470, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode<IConstructor>(472, 0, "Form", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new NonTerminalStackNode<IConstructor>(474, 1, "layouts_Standard", null, null)}, false, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(468, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(466, 0, prod__lit___35_40__char_class___range__35_35_char_class___range__40_40_, new int[] {35,40}, null, null);
       builder.addAlternative(ClojureParser.prod__fn_Form__lit___35_40_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___41_, tmp);
 	}
-    protected static final void _init_prod__meta_Form__alt___lit___35_94_lit___94_layouts_Standard_meta_Form_layouts_Standard_arg_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[5];
+    protected static final void _init_prod__meta_Form__alt___lit___35_94_lit___94_layouts_Standard_meta_Form_layouts_Standard_arg_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[5];
       
-      tmp[4] = new NonTerminalStackNode(492, 4, "Form", null, null);
-      tmp[3] = new NonTerminalStackNode(490, 3, "layouts_Standard", null, null);
-      tmp[2] = new NonTerminalStackNode(488, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(486, 1, "layouts_Standard", null, null);
-      tmp[0] = new AlternativeStackNode(480, 0, regular__alt___lit___35_94_lit___94, new AbstractStackNode[]{new LiteralStackNode(482, 0, prod__lit___35_94__char_class___range__35_35_char_class___range__94_94_, new int[] {35,94}, null, null), new LiteralStackNode(484, 0, prod__lit___94__char_class___range__94_94_, new int[] {94}, null, null)}, null, null);
+      tmp[4] = new NonTerminalStackNode<IConstructor>(492, 4, "Form", null, null);
+      tmp[3] = new NonTerminalStackNode<IConstructor>(490, 3, "layouts_Standard", null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(488, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(486, 1, "layouts_Standard", null, null);
+      tmp[0] = new AlternativeStackNode<IConstructor>(480, 0, regular__alt___lit___35_94_lit___94, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new LiteralStackNode<IConstructor>(482, 0, prod__lit___35_94__char_class___range__35_35_char_class___range__94_94_, new int[] {35,94}, null, null), new LiteralStackNode<IConstructor>(484, 0, prod__lit___94__char_class___range__94_94_, new int[] {94}, null, null)}, null, null);
       builder.addAlternative(ClojureParser.prod__meta_Form__alt___lit___35_94_lit___94_layouts_Standard_meta_Form_layouts_Standard_arg_Form_, tmp);
 	}
-    protected static final void _init_prod__string_Form__String_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__string_Form__String_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(494, 0, "String", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(494, 0, "String", null, null);
       builder.addAlternative(ClojureParser.prod__string_Form__String_, tmp);
 	}
-    protected static final void _init_prod__qquote_Form__lit___96_layouts_Standard_arg_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__qquote_Form__lit___96_layouts_Standard_arg_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[0] = new LiteralStackNode(498, 0, prod__lit___96__char_class___range__96_96_, new int[] {96}, null, null);
-      tmp[1] = new NonTerminalStackNode(500, 1, "layouts_Standard", null, null);
-      tmp[2] = new NonTerminalStackNode(502, 2, "Form", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(498, 0, prod__lit___96__char_class___range__96_96_, new int[] {96}, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(500, 1, "layouts_Standard", null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(502, 2, "Form", null, null);
       builder.addAlternative(ClojureParser.prod__qquote_Form__lit___96_layouts_Standard_arg_Form_, tmp);
 	}
-    protected static final void _init_prod__number_Form__Number_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__number_Form__Number_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(496, 0, "Number", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(496, 0, "Number", null, null);
       builder.addAlternative(ClojureParser.prod__number_Form__Number_, tmp);
 	}
-    protected static final void _init_prod__unquotes_Form__lit___126_64_layouts_Standard_arg_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__unquotes_Form__lit___126_64_layouts_Standard_arg_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(508, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(506, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(504, 0, prod__lit___126_64__char_class___range__126_126_char_class___range__64_64_, new int[] {126,64}, null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(508, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(506, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(504, 0, prod__lit___126_64__char_class___range__126_126_char_class___range__64_64_, new int[] {126,64}, null, null);
       builder.addAlternative(ClojureParser.prod__unquotes_Form__lit___126_64_layouts_Standard_arg_Form_, tmp);
 	}
-    protected static final void _init_prod__symbol_Form__Symbol_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__symbol_Form__Symbol_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(510, 0, "Symbol", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(510, 0, "Symbol", null, null);
       builder.addAlternative(ClojureParser.prod__symbol_Form__Symbol_, tmp);
 	}
-    protected static final void _init_prod__vector_Form__lit___91_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___93_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[5];
+    protected static final void _init_prod__vector_Form__lit___91_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___93_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[5];
       
-      tmp[4] = new LiteralStackNode(524, 4, prod__lit___93__char_class___range__93_93_, new int[] {93}, null, null);
-      tmp[3] = new NonTerminalStackNode(522, 3, "layouts_Standard", null, null);
-      tmp[2] = new SeparatedListStackNode(516, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode(518, 0, "Form", null, null), new AbstractStackNode[]{new NonTerminalStackNode(520, 1, "layouts_Standard", null, null)}, false, null, null);
-      tmp[1] = new NonTerminalStackNode(514, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(512, 0, prod__lit___91__char_class___range__91_91_, new int[] {91}, null, null);
+      tmp[4] = new LiteralStackNode<IConstructor>(524, 4, prod__lit___93__char_class___range__93_93_, new int[] {93}, null, null);
+      tmp[3] = new NonTerminalStackNode<IConstructor>(522, 3, "layouts_Standard", null, null);
+      tmp[2] = new SeparatedListStackNode<IConstructor>(516, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode<IConstructor>(518, 0, "Form", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new NonTerminalStackNode<IConstructor>(520, 1, "layouts_Standard", null, null)}, false, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(514, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(512, 0, prod__lit___91__char_class___range__91_91_, new int[] {91}, null, null);
       builder.addAlternative(ClojureParser.prod__vector_Form__lit___91_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___93_, tmp);
 	}
-    protected static final void _init_prod__var_Form__lit___35_39_layouts_Standard_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__var_Form__lit___35_39_layouts_Standard_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(530, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(528, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(526, 0, prod__lit___35_39__char_class___range__35_35_char_class___range__39_39_, new int[] {35,39}, null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(530, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(528, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(526, 0, prod__lit___35_39__char_class___range__35_35_char_class___range__39_39_, new int[] {35,39}, null, null);
       builder.addAlternative(ClojureParser.prod__var_Form__lit___35_39_layouts_Standard_Form_, tmp);
 	}
-    protected static final void _init_prod__quote_Form__lit___39_layouts_Standard_arg_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__quote_Form__lit___39_layouts_Standard_arg_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(536, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(534, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(532, 0, prod__lit___39__char_class___range__39_39_, new int[] {39}, null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(536, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(534, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(532, 0, prod__lit___39__char_class___range__39_39_, new int[] {39}, null, null);
       builder.addAlternative(ClojureParser.prod__quote_Form__lit___39_layouts_Standard_arg_Form_, tmp);
 	}
-    protected static final void _init_prod__char_Form__Char_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__char_Form__Char_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(538, 0, "Char", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(538, 0, "Char", null, null);
       builder.addAlternative(ClojureParser.prod__char_Form__Char_, tmp);
 	}
-    protected static final void _init_prod__discard_Form__lit___35_95_layouts_Standard_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__discard_Form__lit___35_95_layouts_Standard_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(544, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(542, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(540, 0, prod__lit___35_95__char_class___range__35_35_char_class___range__95_95_, new int[] {35,95}, null, null);
+      tmp[2] = new NonTerminalStackNode<IConstructor>(544, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(542, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(540, 0, prod__lit___35_95__char_class___range__35_35_char_class___range__95_95_, new int[] {35,95}, null, null);
       builder.addAlternative(ClojureParser.prod__discard_Form__lit___35_95_layouts_Standard_Form_, tmp);
 	}
-    protected static final void _init_prod__list_Form__lit___40_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___41_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[5];
+    protected static final void _init_prod__list_Form__lit___40_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___41_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[5];
       
-      tmp[4] = new LiteralStackNode(558, 4, prod__lit___41__char_class___range__41_41_, new int[] {41}, null, null);
-      tmp[3] = new NonTerminalStackNode(556, 3, "layouts_Standard", null, null);
-      tmp[2] = new SeparatedListStackNode(550, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode(552, 0, "Form", null, null), new AbstractStackNode[]{new NonTerminalStackNode(554, 1, "layouts_Standard", null, null)}, false, null, null);
-      tmp[1] = new NonTerminalStackNode(548, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(546, 0, prod__lit___40__char_class___range__40_40_, new int[] {40}, null, null);
+      tmp[4] = new LiteralStackNode<IConstructor>(558, 4, prod__lit___41__char_class___range__41_41_, new int[] {41}, null, null);
+      tmp[3] = new NonTerminalStackNode<IConstructor>(556, 3, "layouts_Standard", null, null);
+      tmp[2] = new SeparatedListStackNode<IConstructor>(550, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode<IConstructor>(552, 0, "Form", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new NonTerminalStackNode<IConstructor>(554, 1, "layouts_Standard", null, null)}, false, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(548, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(546, 0, prod__lit___40__char_class___range__40_40_, new int[] {40}, null, null);
       builder.addAlternative(ClojureParser.prod__list_Form__lit___40_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___41_, tmp);
 	}
-    protected static final void _init_prod__regexp_Form__RegExp_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__regexp_Form__RegExp_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(560, 0, "RegExp", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(560, 0, "RegExp", null, null);
       builder.addAlternative(ClojureParser.prod__regexp_Form__RegExp_, tmp);
 	}
-    protected static final void _init_prod__arg_Form__Arg_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__arg_Form__Arg_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new NonTerminalStackNode(562, 0, "Arg", null, null);
+      tmp[0] = new NonTerminalStackNode<IConstructor>(562, 0, "Arg", null, null);
       builder.addAlternative(ClojureParser.prod__arg_Form__Arg_, tmp);
 	}
-    protected static final void _init_prod__map_Form__lit___123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[5];
+    protected static final void _init_prod__map_Form__lit___123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[5];
       
-      tmp[4] = new LiteralStackNode(576, 4, prod__lit___125__char_class___range__125_125_, new int[] {125}, null, null);
-      tmp[3] = new NonTerminalStackNode(574, 3, "layouts_Standard", null, null);
-      tmp[2] = new SeparatedListStackNode(568, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode(570, 0, "Form", null, null), new AbstractStackNode[]{new NonTerminalStackNode(572, 1, "layouts_Standard", null, null)}, false, null, null);
-      tmp[1] = new NonTerminalStackNode(566, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(564, 0, prod__lit___123__char_class___range__123_123_, new int[] {123}, null, null);
+      tmp[4] = new LiteralStackNode<IConstructor>(576, 4, prod__lit___125__char_class___range__125_125_, new int[] {125}, null, null);
+      tmp[3] = new NonTerminalStackNode<IConstructor>(574, 3, "layouts_Standard", null, null);
+      tmp[2] = new SeparatedListStackNode<IConstructor>(568, 2, regular__iter_star_seps__Form__layouts_Standard, new NonTerminalStackNode<IConstructor>(570, 0, "Form", null, null), (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new NonTerminalStackNode<IConstructor>(572, 1, "layouts_Standard", null, null)}, false, null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(566, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(564, 0, prod__lit___123__char_class___range__123_123_, new int[] {123}, null, null);
       builder.addAlternative(ClojureParser.prod__map_Form__lit___123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_, tmp);
 	}
-    protected static final void _init_prod__unquote_Form__conditional__lit___126__not_follow__char_class___range__64_64_layouts_Standard_arg_Form_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__unquote_Form__conditional__lit___126__not_follow__char_class___range__64_64_layouts_Standard_arg_Form_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new NonTerminalStackNode(582, 2, "Form", null, null);
-      tmp[1] = new NonTerminalStackNode(580, 1, "layouts_Standard", null, null);
-      tmp[0] = new LiteralStackNode(578, 0, prod__lit___126__char_class___range__126_126_, new int[] {126}, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{64,64}})});
+      tmp[2] = new NonTerminalStackNode<IConstructor>(582, 2, "Form", null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(580, 1, "layouts_Standard", null, null);
+      tmp[0] = new LiteralStackNode<IConstructor>(578, 0, prod__lit___126__char_class___range__126_126_, new int[] {126}, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{64,64}})});
       builder.addAlternative(ClojureParser.prod__unquote_Form__conditional__lit___126__not_follow__char_class___range__64_64_layouts_Standard_arg_Form_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__set_Form__lit___35_123_layouts_Standard_iter_star_seps__Form__layouts_Standard_layouts_Standard_lit___125_(builder);
@@ -974,23 +976,23 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class RegExp {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__RegExp__char_class___range__35_35_char_class___range__34_34_iter_star__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34_char_class___range__34_34_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[4];
+    protected static final void _init_prod__RegExp__char_class___range__35_35_char_class___range__34_34_iter_star__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34_char_class___range__34_34_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[4];
       
-      tmp[3] = new CharStackNode(616, 3, new int[][]{{34,34}}, null, null);
-      tmp[2] = new ListStackNode(604, 2, regular__iter_star__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34, new AlternativeStackNode(606, 0, regular__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34, new AbstractStackNode[]{new CharStackNode(608, 0, new int[][]{{0,33},{35,16777215}}, null, null), new SequenceStackNode(610, 0, regular__seq___char_class___range__92_92_char_class___range__34_34, new AbstractStackNode[]{new CharStackNode(612, 0, new int[][]{{92,92}}, null, null), new CharStackNode(614, 1, new int[][]{{34,34}}, null, null)}, null, null)}, null, null), false, null, null);
-      tmp[1] = new CharStackNode(602, 1, new int[][]{{34,34}}, null, null);
-      tmp[0] = new CharStackNode(600, 0, new int[][]{{35,35}}, null, null);
+      tmp[3] = new CharStackNode<IConstructor>(616, 3, new int[][]{{34,34}}, null, null);
+      tmp[2] = new ListStackNode<IConstructor>(604, 2, regular__iter_star__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34, new AlternativeStackNode<IConstructor>(606, 0, regular__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(608, 0, new int[][]{{0,33},{35,16777215}}, null, null), new SequenceStackNode<IConstructor>(610, 0, regular__seq___char_class___range__92_92_char_class___range__34_34, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(612, 0, new int[][]{{92,92}}, null, null), new CharStackNode<IConstructor>(614, 1, new int[][]{{34,34}}, null, null)}, null, null)}, null, null), false, null, null);
+      tmp[1] = new CharStackNode<IConstructor>(602, 1, new int[][]{{34,34}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(600, 0, new int[][]{{35,35}}, null, null);
       builder.addAlternative(ClojureParser.prod__RegExp__char_class___range__35_35_char_class___range__34_34_iter_star__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34_char_class___range__34_34_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__RegExp__char_class___range__35_35_char_class___range__34_34_iter_star__alt___char_class___range__0_33_range__35_16777215_seq___char_class___range__92_92_char_class___range__34_34_char_class___range__34_34_(builder);
@@ -999,47 +1001,47 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class StrChar {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__StrChar__char_class___range__92_92_char_class___range__48_51_char_class___range__48_55_char_class___range__48_55_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[4];
+    protected static final void _init_prod__StrChar__char_class___range__92_92_char_class___range__48_51_char_class___range__48_55_char_class___range__48_55_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[4];
       
-      tmp[3] = new CharStackNode(632, 3, new int[][]{{48,55}}, null, null);
-      tmp[2] = new CharStackNode(630, 2, new int[][]{{48,55}}, null, null);
-      tmp[1] = new CharStackNode(628, 1, new int[][]{{48,51}}, null, null);
-      tmp[0] = new CharStackNode(626, 0, new int[][]{{92,92}}, null, null);
+      tmp[3] = new CharStackNode<IConstructor>(632, 3, new int[][]{{48,55}}, null, null);
+      tmp[2] = new CharStackNode<IConstructor>(630, 2, new int[][]{{48,55}}, null, null);
+      tmp[1] = new CharStackNode<IConstructor>(628, 1, new int[][]{{48,51}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(626, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__StrChar__char_class___range__92_92_char_class___range__48_51_char_class___range__48_55_char_class___range__48_55_, tmp);
 	}
-    protected static final void _init_prod__StrChar__char_class___range__0_33_range__35_91_range__93_16777215_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__StrChar__char_class___range__0_33_range__35_91_range__93_16777215_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new CharStackNode(634, 0, new int[][]{{0,33},{35,91},{93,16777215}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(634, 0, new int[][]{{0,33},{35,91},{93,16777215}}, null, null);
       builder.addAlternative(ClojureParser.prod__StrChar__char_class___range__0_33_range__35_91_range__93_16777215_, tmp);
 	}
-    protected static final void _init_prod__StrChar__char_class___range__92_92_char_class___range__34_34_range__92_92_range__98_98_range__102_102_range__110_110_range__114_114_range__116_116_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[2];
+    protected static final void _init_prod__StrChar__char_class___range__92_92_char_class___range__34_34_range__92_92_range__98_98_range__102_102_range__110_110_range__114_114_range__116_116_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[2];
       
-      tmp[1] = new CharStackNode(638, 1, new int[][]{{34,34},{92,92},{98,98},{102,102},{110,110},{114,114},{116,116}}, null, null);
-      tmp[0] = new CharStackNode(636, 0, new int[][]{{92,92}}, null, null);
+      tmp[1] = new CharStackNode<IConstructor>(638, 1, new int[][]{{34,34},{92,92},{98,98},{102,102},{110,110},{114,114},{116,116}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(636, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__StrChar__char_class___range__92_92_char_class___range__34_34_range__92_92_range__98_98_range__102_102_range__110_110_range__114_114_range__116_116_, tmp);
 	}
-    protected static final void _init_prod__StrChar__char_class___range__92_92_char_class___range__117_117_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[6];
+    protected static final void _init_prod__StrChar__char_class___range__92_92_char_class___range__117_117_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[6];
       
-      tmp[5] = new CharStackNode(650, 5, new int[][]{{48,57},{65,70},{97,102}}, null, null);
-      tmp[4] = new CharStackNode(648, 4, new int[][]{{48,57},{65,70},{97,102}}, null, null);
-      tmp[3] = new CharStackNode(646, 3, new int[][]{{48,57},{65,70},{97,102}}, null, null);
-      tmp[2] = new CharStackNode(644, 2, new int[][]{{48,57},{65,70},{97,102}}, null, null);
-      tmp[1] = new CharStackNode(642, 1, new int[][]{{117,117}}, null, null);
-      tmp[0] = new CharStackNode(640, 0, new int[][]{{92,92}}, null, null);
+      tmp[5] = new CharStackNode<IConstructor>(650, 5, new int[][]{{48,57},{65,70},{97,102}}, null, null);
+      tmp[4] = new CharStackNode<IConstructor>(648, 4, new int[][]{{48,57},{65,70},{97,102}}, null, null);
+      tmp[3] = new CharStackNode<IConstructor>(646, 3, new int[][]{{48,57},{65,70},{97,102}}, null, null);
+      tmp[2] = new CharStackNode<IConstructor>(644, 2, new int[][]{{48,57},{65,70},{97,102}}, null, null);
+      tmp[1] = new CharStackNode<IConstructor>(642, 1, new int[][]{{117,117}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(640, 0, new int[][]{{92,92}}, null, null);
       builder.addAlternative(ClojureParser.prod__StrChar__char_class___range__92_92_char_class___range__117_117_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_char_class___range__48_57_range__65_70_range__97_102_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__StrChar__char_class___range__92_92_char_class___range__48_51_char_class___range__48_55_char_class___range__48_55_(builder);
@@ -1054,22 +1056,22 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Integer {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Integer__opt__char_class___range__43_43_range__45_45_IntValue_opt__char_class___range__78_78_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[3];
+    protected static final void _init_prod__Integer__opt__char_class___range__43_43_range__45_45_IntValue_opt__char_class___range__78_78_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[3];
       
-      tmp[2] = new OptionalStackNode(680, 2, regular__opt__char_class___range__78_78, new CharStackNode(682, 0, new int[][]{{78,78}}, null, null), null, null);
-      tmp[1] = new NonTerminalStackNode(678, 1, "IntValue", null, null);
-      tmp[0] = new OptionalStackNode(674, 0, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode(676, 0, new int[][]{{43,43},{45,45}}, null, null), null, null);
+      tmp[2] = new OptionalStackNode<IConstructor>(680, 2, regular__opt__char_class___range__78_78, new CharStackNode<IConstructor>(682, 0, new int[][]{{78,78}}, null, null), null, null);
+      tmp[1] = new NonTerminalStackNode<IConstructor>(678, 1, "IntValue", null, null);
+      tmp[0] = new OptionalStackNode<IConstructor>(674, 0, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode<IConstructor>(676, 0, new int[][]{{43,43},{45,45}}, null, null), null, null);
       builder.addAlternative(ClojureParser.prod__Integer__opt__char_class___range__43_43_range__45_45_IntValue_opt__char_class___range__78_78_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Integer__opt__char_class___range__43_43_range__45_45_IntValue_opt__char_class___range__78_78_(builder);
@@ -1078,20 +1080,20 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class layouts_$BACKTICKS {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__layouts_$BACKTICKS__(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__layouts_$BACKTICKS__(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new EpsilonStackNode(686, 0);
+      tmp[0] = new EpsilonStackNode<IConstructor>(686, 0);
       builder.addAlternative(ClojureParser.prod__layouts_$BACKTICKS__, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__layouts_$BACKTICKS__(builder);
@@ -1100,20 +1102,20 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class Whitespace {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__Whitespace__char_class___range__9_10_range__12_13_range__32_32_range__44_44_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__Whitespace__char_class___range__9_10_range__12_13_range__32_32_range__44_44_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new CharStackNode(688, 0, new int[][]{{9,10},{12,13},{32,32},{44,44}}, null, null);
+      tmp[0] = new CharStackNode<IConstructor>(688, 0, new int[][]{{9,10},{12,13},{32,32},{44,44}}, null, null);
       builder.addAlternative(ClojureParser.prod__Whitespace__char_class___range__9_10_range__12_13_range__32_32_range__44_44_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__Whitespace__char_class___range__9_10_range__12_13_range__32_32_range__44_44_(builder);
@@ -1122,23 +1124,23 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class FloatValue {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__FloatValue__iter__char_class___range__48_57_char_class___range__46_46_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_opt__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[4];
+    protected static final void _init_prod__FloatValue__iter__char_class___range__48_57_char_class___range__46_46_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_opt__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[4];
       
-      tmp[3] = new OptionalStackNode(708, 3, regular__opt__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57, new SequenceStackNode(710, 0, regular__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57, new AbstractStackNode[]{new CharStackNode(712, 0, new int[][]{{69,69},{101,101}}, null, null), new OptionalStackNode(714, 1, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode(716, 0, new int[][]{{43,43},{45,45}}, null, null), null, null), new ListStackNode(718, 2, regular__iter__char_class___range__48_57, new CharStackNode(720, 0, new int[][]{{48,57}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})})}, null, null), null, null);
-      tmp[2] = new ListStackNode(704, 2, regular__iter__char_class___range__48_57, new CharStackNode(706, 0, new int[][]{{48,57}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
-      tmp[1] = new CharStackNode(702, 1, new int[][]{{46,46}}, null, null);
-      tmp[0] = new ListStackNode(698, 0, regular__iter__char_class___range__48_57, new CharStackNode(700, 0, new int[][]{{48,57}}, null, null), true, null, null);
+      tmp[3] = new OptionalStackNode<IConstructor>(708, 3, regular__opt__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57, new SequenceStackNode<IConstructor>(710, 0, regular__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57, (AbstractStackNode<IConstructor>[]) new AbstractStackNode[]{new CharStackNode<IConstructor>(712, 0, new int[][]{{69,69},{101,101}}, null, null), new OptionalStackNode<IConstructor>(714, 1, regular__opt__char_class___range__43_43_range__45_45, new CharStackNode<IConstructor>(716, 0, new int[][]{{43,43},{45,45}}, null, null), null, null), new ListStackNode<IConstructor>(718, 2, regular__iter__char_class___range__48_57, new CharStackNode<IConstructor>(720, 0, new int[][]{{48,57}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})})}, null, null), null, null);
+      tmp[2] = new ListStackNode<IConstructor>(704, 2, regular__iter__char_class___range__48_57, new CharStackNode<IConstructor>(706, 0, new int[][]{{48,57}}, null, null), true, null, new ICompletionFilter[] {new CharFollowRestriction(new int[][]{{48,57}})});
+      tmp[1] = new CharStackNode<IConstructor>(702, 1, new int[][]{{46,46}}, null, null);
+      tmp[0] = new ListStackNode<IConstructor>(698, 0, regular__iter__char_class___range__48_57, new CharStackNode<IConstructor>(700, 0, new int[][]{{48,57}}, null, null), true, null, null);
       builder.addAlternative(ClojureParser.prod__FloatValue__iter__char_class___range__48_57_char_class___range__46_46_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_opt__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__FloatValue__iter__char_class___range__48_57_char_class___range__46_46_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_opt__seq___char_class___range__69_69_range__101_101_opt__char_class___range__43_43_range__45_45_conditional__iter__char_class___range__48_57__not_follow__char_class___range__48_57_(builder);
@@ -1147,20 +1149,20 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
   }
 	
   protected static class layouts_$default$ {
-    public final static AbstractStackNode[] EXPECTS;
+    public final static AbstractStackNode<IConstructor>[] EXPECTS;
     static{
-      ExpectBuilder builder = new ExpectBuilder(_resultStoreIdMappings);
+      ExpectBuilder<IConstructor> builder = new ExpectBuilder<IConstructor>(_resultStoreIdMappings);
       init(builder);
       EXPECTS = builder.buildExpectArray();
     }
     
-    protected static final void _init_prod__layouts_$default$__(ExpectBuilder builder) {
-      AbstractStackNode[] tmp = new AbstractStackNode[1];
+    protected static final void _init_prod__layouts_$default$__(ExpectBuilder<IConstructor> builder) {
+      AbstractStackNode<IConstructor>[] tmp = (AbstractStackNode<IConstructor>[]) new AbstractStackNode[1];
       
-      tmp[0] = new EpsilonStackNode(726, 0);
+      tmp[0] = new EpsilonStackNode<IConstructor>(726, 0);
       builder.addAlternative(ClojureParser.prod__layouts_$default$__, tmp);
 	}
-    public static void init(ExpectBuilder builder){
+    public static void init(ExpectBuilder<IConstructor> builder){
       
       
         _init_prod__layouts_$default$__(builder);
@@ -1174,76 +1176,76 @@ public class ClojureParser extends org.rascalmpl.library.lang.rascal.syntax.Rasc
 
   // Parse methods    
   
-  public AbstractStackNode[] layouts_Standard() {
+  public AbstractStackNode<IConstructor>[] layouts_Standard() {
     return layouts_Standard.EXPECTS;
   }
-  public AbstractStackNode[] Ratio() {
+  public AbstractStackNode<IConstructor>[] Ratio() {
     return Ratio.EXPECTS;
   }
-  public AbstractStackNode[] Stem() {
+  public AbstractStackNode<IConstructor>[] Stem() {
     return Stem.EXPECTS;
   }
-  public AbstractStackNode[] Number() {
+  public AbstractStackNode<IConstructor>[] Number() {
     return Number.EXPECTS;
   }
-  public AbstractStackNode[] start__File() {
+  public AbstractStackNode<IConstructor>[] start__File() {
     return start__File.EXPECTS;
   }
-  public AbstractStackNode[] IntValue() {
+  public AbstractStackNode<IConstructor>[] IntValue() {
     return IntValue.EXPECTS;
   }
-  public AbstractStackNode[] Char() {
+  public AbstractStackNode<IConstructor>[] Char() {
     return Char.EXPECTS;
   }
-  public AbstractStackNode[] File() {
+  public AbstractStackNode<IConstructor>[] File() {
     return File.EXPECTS;
   }
-  public AbstractStackNode[] Ident() {
+  public AbstractStackNode<IConstructor>[] Ident() {
     return Ident.EXPECTS;
   }
-  public AbstractStackNode[] layouts_$QUOTES() {
+  public AbstractStackNode<IConstructor>[] layouts_$QUOTES() {
     return layouts_$QUOTES.EXPECTS;
   }
-  public AbstractStackNode[] Comment() {
+  public AbstractStackNode<IConstructor>[] Comment() {
     return Comment.EXPECTS;
   }
-  public AbstractStackNode[] Float() {
+  public AbstractStackNode<IConstructor>[] Float() {
     return Float.EXPECTS;
   }
-  public AbstractStackNode[] Symbol() {
+  public AbstractStackNode<IConstructor>[] Symbol() {
     return Symbol.EXPECTS;
   }
-  public AbstractStackNode[] Arg() {
+  public AbstractStackNode<IConstructor>[] Arg() {
     return Arg.EXPECTS;
   }
-  public AbstractStackNode[] WhitespaceOrComment() {
+  public AbstractStackNode<IConstructor>[] WhitespaceOrComment() {
     return WhitespaceOrComment.EXPECTS;
   }
-  public AbstractStackNode[] String() {
+  public AbstractStackNode<IConstructor>[] String() {
     return String.EXPECTS;
   }
-  public AbstractStackNode[] Form() {
+  public AbstractStackNode<IConstructor>[] Form() {
     return Form.EXPECTS;
   }
-  public AbstractStackNode[] RegExp() {
+  public AbstractStackNode<IConstructor>[] RegExp() {
     return RegExp.EXPECTS;
   }
-  public AbstractStackNode[] StrChar() {
+  public AbstractStackNode<IConstructor>[] StrChar() {
     return StrChar.EXPECTS;
   }
-  public AbstractStackNode[] Integer() {
+  public AbstractStackNode<IConstructor>[] Integer() {
     return Integer.EXPECTS;
   }
-  public AbstractStackNode[] layouts_$BACKTICKS() {
+  public AbstractStackNode<IConstructor>[] layouts_$BACKTICKS() {
     return layouts_$BACKTICKS.EXPECTS;
   }
-  public AbstractStackNode[] Whitespace() {
+  public AbstractStackNode<IConstructor>[] Whitespace() {
     return Whitespace.EXPECTS;
   }
-  public AbstractStackNode[] FloatValue() {
+  public AbstractStackNode<IConstructor>[] FloatValue() {
     return FloatValue.EXPECTS;
   }
-  public AbstractStackNode[] layouts_$default$() {
+  public AbstractStackNode<IConstructor>[] layouts_$default$() {
     return layouts_$default$.EXPECTS;
   }
 }

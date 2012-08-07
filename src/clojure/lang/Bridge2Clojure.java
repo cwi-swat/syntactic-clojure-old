@@ -14,8 +14,6 @@ public class Bridge2Clojure {
 
 	private final IValueFactory vf;
 
-	
-	
 	public Bridge2Clojure(IValueFactory vf) {
 		try {
 			RT.doInit();
@@ -39,7 +37,6 @@ public class Bridge2Clojure {
 		Bridge2Clojure bridge = new Bridge2Clojure(vf);
 		IConstructor pt = bridge.loadForRascal(vf.string("()"), vf.sourceLocation("/"));
 		System.out.println(pt);
-	}
-	
+	}	
 	
 }
